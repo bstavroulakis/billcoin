@@ -1,0 +1,58 @@
+html,body,ul,li{
+	padding:0;
+	margin:0;
+	font-family: Calibri, Tahoma, Arial, Helvetica, Sans-Serif;
+}
+
+button{
+	cursor: pointer;
+}
+
+.full{
+	width:100%;
+}
+
+.hidden{
+	display: none;
+}
+
+.block{
+	box-sizing:border-box;
+	-moz-box-sizing:border-box;
+}
+
+.wrap{
+	word-wrap: break-word;
+}
+
+.table tr td:nth-child(1){
+	width:15%;
+	text-align:right;
+}
+
+.table tr td:nth-child(2){
+	width:85%;
+	text-align:left;
+}
+
+pre, code {
+	font-family: 'UbuntuMono', monospace;
+	overflow-x: auto;
+	white-space: pre;
+	padding: 10px;
+	line-height: 150%;
+	background-color: #f8f8f8;
+	border: 1px solid #ccc;
+}
+
+.clearfix{
+	clear:both;
+}
+
+.left{
+	float:left;
+}
+
+.right{
+	float:right;
+}

@@ -1,0 +1,114 @@
+section{
+	width:25%;
+	float:left;
+	border-right:1px solid #ccc;
+	box-sizing:border-box;
+	height:90%;
+	overflow-y:scroll;
+}
+
+h1{
+	padding-top:0px;
+	color:#ffffff;
+	font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+	padding:0;
+	margin:0;
+}
+
+.top_header{
+	width: 100%;
+	background-color: #222;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	display: block;
+}
+
+section header{
+	width: 100%;
+	background-color: #f1b44a;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	display: block;
+	padding-bottom:5px;
+	color:#222;
+	border-bottom:1px solid #222222;
+}
+
+section header a{
+	color:#ffffff;
+}
+
+.section_header{
+	margin-top:0px;
+	padding-left:5px;
+	padding-top:5px;
+	margin-bottom:0px;
+}
+
+.billcoin_logo{
+	width: 53px;
+	margin-right:10px;
+	margin-top:2px;
+}
+
+.green_button{
+	background-color: #627d36;
+	border:1px solid #ffffff;
+	border-radius: 2px;
+	color:#ffffff;
+	padding:7px 25px;
+	margin:10px;
+}
+
+.gray_button{
+	background-color: #cccccc;
+	border: 1px solid #ffffff;
+	border-radius: 2px;
+	color: #ffffff;
+	padding: 7px 7px;
+}
+
+button a{
+	text-decoration:none;
+	color:#ffffff;
+	font-size:20px;
+}
+
+.ui-dialog{
+	padding:10px;
+	background-color: #efefef;
+	border:1px solid #000000;
+}
+
+.ui-widget-header{
+	cursor: move;
+	background-color: #cccccc;
+	padding:2px;
+	box-sizing: border-box;
+	display: inline-block;
+	width: 100%;
+}
+
+.ui-widget-header .ui-button, .ui-dialog-buttonpane button{
+	float:right;
+}
+
+.ui-dialog-buttonpane{
+	box-sizing: border-box;
+	display: inline-block;
+	width: 100%;
+}
+
+#pendingTransaction{
+	font-size: 80%;
+}
+
+#pendingTransactions li{
+	padding-bottom:10px;
+	background-color: #efefef;
+	border-bottom:1px solid #444444;
+}
+
+#pendingTransactions{
+	word-wrap: break-word;
+}
