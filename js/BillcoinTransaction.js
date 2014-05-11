@@ -44,6 +44,7 @@ var BillcoinTransaction = function(){
     }
 		$.ajax({
         	url : self.mainDomain + "getTxHistory.php?address=" + senderAddress,
+          async:false,
         	success : function (data) {
 
         		var transaction = new TX();

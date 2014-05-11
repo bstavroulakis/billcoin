@@ -184,13 +184,13 @@ var Billcoin = function(){
 	self.updateTransactionDataTimer = function(){
 		setInterval(function(){
 			self.updateTransactionData();
-		}, 3000);
+		}, 5000);
 	};
 
 	self.updateBlockchainDataTimer = function(){
 		setInterval(function(){
 			self.updateBlockchainData();
-		}, 3000);
+		}, 5000);
 	};
 
 	self.updateTransactionData = function(){
@@ -198,6 +198,7 @@ var Billcoin = function(){
 			var dataJson = "[" + data.replace(/}{/g,"}\,{") + "]";
 			var transactions = jQuery.parseJSON(dataJson);
 			var liTrans = "";
+			self.model.transactionsPending([]);
 			for(var key in transactions){
 				liTrans += "<li>" + JSON.stringify(transactions[key]) + "</li>";
 				self.model.transactionsPending.push(transactions[key]);
@@ -211,10 +212,11 @@ var Billcoin = function(){
 			if(data == null || data == "")
 				return;
 
-			var jQueryData = jQuery.parseJSON(JSON.parse("[" + data + "]"));
+			var dataJson = "[" + data + "]";
+			var jQueryData = jQuery.parseJSON((dataJson));
 			var liTrans = "";
 			for(var key in jQueryData){
-				liTrans += "<li>" + jQueryData[key] + "</li>";
+				liTrans += "<li>" + jQueryData[key].hash + "</li>";
 			};
 			$("#blockchain").html(liTrans);
 		});
