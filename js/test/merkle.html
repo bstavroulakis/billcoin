@@ -3,59 +3,27 @@
 <head>
 
 <script src="/billcoin/js/lib/Sha256.js"></script>
+<script src="/billcoin/js/lib/Crypto.js"></script>
 <script>
 
 var sha256 = new Sha256();
 var txHashes = [
-
-"9f05c53342f27ed9835ac437bf686fec42b448c44d493fa9636dd8515e416714",
-"9013f0b04b0853a3f109ba3cd856be6dceb20bb7942e208ae25c0b20d91d9d32",
-"2c0edee793db7671f2f808156ad8b52001bccbb4e23a0bae5103abe22e69c989",
-"56a4a50f0867b76c4ed109dfd7c3c1b604a12e5ea07186185244f20d8a173863",
-"e62773864d13236ef39f8f04e6a20d3e9c5768c87f571be27f67a2cc25b63b35",
-"d2e9f459671847ea2f3c204444b257130b929be69366a8c0b2bc76ee83b676df",
-"197f7f80d7d7df5c8f8d24ab4b631f09b59319fc865f509032eb5a65485a2bfb",
-"109d95604761a777d672414053146c93483fb64d2cce09ff9de8a847f4c24a32",
-"ae6994befc02e0f93909b661a9ecc957a299e6ed3f112ce46362395d67d0190b",
-"392accfeaf3acc770f0106e51d609f78e52da501c3fce19fd9de783415a2aec1"
-
+"338bbd00b893c384eb2b11e70f3875447297c5f20815499e787867df4538e48d",
+"1ad1138c6064dd17d0a4d12016d629c18f15fc9d1472412945f9c91a696689c7",
+"c77834d14d66729014b06fcf45c5f82af4bdd9d816e787f01bfa525cfa147014",
+"bb3d83398d7517fe643b2421d795e73c342b6a478ef53acdaab35dbdffbbcdb5",
+"38d563caf0e9ed103515cab09e40e49da0ccb8c0765ce304f9556e5bc62e8ff5",
+"8fc0507359d0122fa14b5887034d857bd69c8bc0e74c8dd428c2fc098595c285",
+"9db9fe6d011c1c7e997418aeec78ccb659648cfc915b2ff1154cabb41359ac70",
+"3c72fdb7e38e4437faa9e5789df6b51505de014b062361ef47578244d5025628"
 ];
-
-var bytesToHex = function(bytes) {
-	for (var hex = [], i = 0; i < bytes.length; i++) {
-		hex.push((bytes[i] >>> 4).toString(16));
-		hex.push((bytes[i] & 0xF).toString(16));
-	}
-	return hex.join("");
-};
-var hexToBytes = function(hex) {
-	for (var bytes = [], c = 0; c < hex.length; c += 2)
-		bytes.push(parseInt(hex.substr(c, 2), 16));
-	return bytes;
-};
-var stringToBytes = function(str){
-	var bytes = [];
-	for (var i = 0; i < str.length; ++i)
-	{
-	    bytes.push(str.charCodeAt(i));
-	}
-	return bytes;
-};
-function bytesToString(array) {
-  var result = "";
-  for (var i = 0; i < array.length; i++) {
-    result += String.fromCharCode(parseInt(array[i],2));
-  }
-  return result;
-}
-
-function reverse(s){
-    var out = s.split("").reverse().join("");
-    return out;
-}
 
 var count = 0;
 function merkleHash(hashes){
+
+	if(hashes.length == 1)
+		return hashes[0];
+
 	var newHash = [];
     for (var key=0;key<=hashes.length-1;key+=2){
     	if((key + 1) == hashes.length){
@@ -68,7 +36,6 @@ function merkleHash(hashes){
     	var last = hashes[hashes.length-1];
 		newHash.push(hashAb(last, last))
 	}
-	console.log(hashes,newHash);
 	if(count == 15)
 		return;
 	else
@@ -76,39 +43,18 @@ function merkleHash(hashes){
     return merkleHash(newHash);
 }
 
-function stringToHex2(str){
-	var hex, i;
-	//var str = "\u6f22\u5b57"; // "\u6f22\u5b57" === "漢字"
-	var result = "";
-	for (i=0; i<str.length; i++) {
-	  hex = str.charCodeAt(i).toString(16);
-	  result += ("000"+hex).slice(-4);
-	}
-	return result;
-}
-
-function hexToString2(hexes){
-	var j;
-	//var hexes = result.match(/.{1,4}/g) || [];
-	var back = "";
-	for(j = 0; j<hexes.length; j++) {
-	  back += String.fromCharCode(parseInt(hexes[i], 16));
-	}
-}
-
 function hashAb(hashA, hashB){
-	var a = (((hashA)));
-	var a2 = decodeHash(a);
-	//var a2 = a.reverse();
-	var b = (((hashB)));
-	var b2 = decodeHash(b);
-	//var b2 = b.reverse();
-	var c = a2 + b2;
-	var hashed = sha256.generate(sha256.generate(c, {asBytes: false}), {asBytes: false});
-	return decodeHash(hashed);
+	var a = decodeHash(hashA);
+	var b = decodeHash(hashB);
+	var c = a + " " + b;
+	var hash1 = sha256.generate(c, {asBytes:false});
+	console.log("hash1:", (hash1));
+	var hashed = sha256.generate(hash1, {asBytes:false});
+	console.log("hash2:", (hashed));
+	var ret = decodeHash(hashed);
+	return ret;
 }
-
-
+               
 function decodeHash(str){
 
 	var charArr = [];
@@ -124,38 +70,12 @@ function decodeHash(str){
 	var reversed = charArr.reverse();
 	for(var key=0;key<=reversed.length-1;key+=1){
 		decoded += reversed[key];
-		//decoded += String.fromCharCode(parseInt(charArr[key],16));
 	}
 
 	return decoded;
 }
 
-function encodeToHex(str){
-    var r="";
-    var e=str.length;
-    var c=0;
-    var h;
-    while(c<e){
-        h=str.charCodeAt(c++).toString(16);
-        while(h.length<3) h="0"+h;
-        r+=h;
-    }
-    return r;
-}
-function decodeFromHex(str){
-    var r="";
-    var e=str.length;
-    var s;
-    while(e>=0){
-        s=e-3;
-        r=String.fromCharCode("0x"+str.substring(s,e))+r;
-        e=s;
-    }
-    return r;
-}
-
-merkleHash(txHashes);
-//console.log(merkleHash(txHashes));
+console.log(merkleHash(txHashes));
 </script>
 </head>
 </html>

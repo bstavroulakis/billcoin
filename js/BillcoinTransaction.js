@@ -36,14 +36,20 @@ var BillcoinTransaction = function(){
 	};
 
 	self.generate = function(senderWallet, receiver, amount){
-		self.priv2key(senderWallet.wifCompressed());
+    
+    var senderAddress = "";
+    if(senderWallet != "Generate"){
+		  self.priv2key(senderWallet.wifCompressed());
+      senderAddress = senderWallet.address();
+    }
 		$.ajax({
-        	url : self.mainDomain + "getTxHistory.php?address=" + senderWallet.address(),
+        	url : self.mainDomain + "getTxHistory.php?address=" + senderAddress,
         	success : function (data) {
 
         		var transaction = new TX();
         		transaction.init(self.key);
-        		transaction.parseInputs(data, senderWallet.address());
+            if(senderWallet != "Generate")
+        		  transaction.parseInputs(data, senderWallet.address());
         		transaction.addOutput(receiver, amount);
 			      var sendTx = transaction.construct();
 

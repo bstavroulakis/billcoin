@@ -13,6 +13,8 @@ var Billcoin = function(){
 		totalBalance:0
 	};
 
+	self.block = new Block();
+
 	self.setupDOM = function(){
 
 		$( "#dialog-form" ).dialog({
@@ -101,11 +103,24 @@ var Billcoin = function(){
 
 	//MINING EVENTS
 	self.startMining = function(){
-		self.model.mining.running(true);
+
+		var wallet = $('#miner_wallet').find(":selected");
+		var previousBlockHash = "0000000000000000000000000000000000000000000000000000000000000000";
+		if(self.model.blockchain().length != 0){
+			previousBlockHash = self.model.blockchain()[self.model.blockchain().length - 1].hash();
+		};
+
+		if(wallet == null){
+			alert("Create a wallet first before mining.");
+		}else{
+			self.block.startMining(ko.mapping.toJS(self.model.transactionsPending), 
+				{address:ko.observable(wallet.val()), wifCompressed:ko.observable(wallet.attr("data-private"))},
+				previousBlockHash);
+		}
 	};
 
 	self.stopMining = function(){
-		self.model.mining.running(false);
+		self.block.stopMining();
 	};
 
 	//WALLET EVENTS

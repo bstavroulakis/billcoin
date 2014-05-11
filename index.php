@@ -24,6 +24,7 @@
 <script src="js/Wallet.js"></script>
 <script src="js/TX.js"></script>
 <script src="js/Block.js"></script>
+<script src="js/Block.js"></script>
 <script src="js/Billcoin.js"></script>
 
 <link rel="stylesheet" href="css/main.css">
@@ -166,14 +167,14 @@ $(document).ready(function(){
 		<span class="padding">
 		Select a wallet to send wining Billcoins to:
 		</span>
-		<select data-bind="foreach:wallets">
-			<option data-bind="text:address,value:address"></option>
+		<select id="miner_wallet" data-bind="foreach:wallets">
+			<option data-bind="text:address,value:address,attr:{'data-private':wifCompressed}"></option>
 		</select>
 		<button class="gray_button right full block start_mining">
 			<a href="javascript:void(0)" data-bind="visible:(!mining.running())">Start Mining</a>
 			<a href="javascript:void(0)" data-bind="visible:mining.running">
 				<img src="images/gif-load.gif" class="left"/>
-				Stop Mining
+				Stop Mining. At Nonce: <span id="mining_nonce"></span>
 			</a>
 		</button>
 		<ul>
