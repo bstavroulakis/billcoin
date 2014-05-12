@@ -112,3 +112,12 @@ button a{
 #pendingTransactions{
 	word-wrap: break-word;
 }
+
+#dialog-block{
+	word-wrap:break-word;
+	overflow-y:scroll;
+}
+
+#blockchain li{
+	word-wrap:break-word;
+}

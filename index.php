@@ -93,6 +93,7 @@ $(document).ready(function(){
 	  </form>
 	</div>
 
+	<div id="dialog-block"></div>
 
 	<section>
 		<header>		

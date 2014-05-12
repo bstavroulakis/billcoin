@@ -5,7 +5,6 @@ var Billcoin = function(){
 
 	self.model = {
 		wallets:[],
-		blockchain:[],
 		transactionsPending:[],
 		mining:{
 			running:false
@@ -14,6 +13,10 @@ var Billcoin = function(){
 	};
 
 	self.block = new Block();
+	self.blockchain = [];
+
+	self.timestampBlockchain = "";
+	self.timestampTransaction = "";
 
 	self.setupDOM = function(){
 
@@ -59,6 +62,13 @@ var Billcoin = function(){
 	      }
 		});
 
+		$( "#dialog-block" ).dialog({
+		  autoOpen: false,
+		  height: 270,
+		  width: 450,
+		  modal: true
+		});
+
 		$(".new_transaction_btn").button().click(function() {
 			$( "#dialog-form" ).dialog( "open" );
 		});
@@ -93,6 +103,11 @@ var Billcoin = function(){
 			self.stopMining();
 		});
 
+		$("#blockchain").on("click",".block_element",function(){
+			$( "#dialog-block" ).html($(this).attr("data-block"));
+			$( "#dialog-block" ).dialog( "open" );
+		});
+
 		self.importWalletSetup();
 	};
 
@@ -106,8 +121,8 @@ var Billcoin = function(){
 
 		var wallet = $('#miner_wallet').find(":selected");
 		var previousBlockHash = "0000000000000000000000000000000000000000000000000000000000000000";
-		if(self.model.blockchain().length != 0){
-			previousBlockHash = self.model.blockchain()[self.model.blockchain().length - 1].hash();
+		if(self.blockchain.length != 0){
+			previousBlockHash = self.blockchain[self.blockchain.length - 1].hash;
 		};
 
 		if(wallet == null){
@@ -117,6 +132,7 @@ var Billcoin = function(){
 				{address:ko.observable(wallet.val()), wifCompressed:ko.observable(wallet.attr("data-private"))},
 				previousBlockHash);
 		}
+
 	};
 
 	self.stopMining = function(){
@@ -182,44 +198,94 @@ var Billcoin = function(){
 	self.setupWallets();
 
 	self.updateTransactionDataTimer = function(){
-		setInterval(function(){
+		/*setInterval(function(){
 			self.updateTransactionData();
-		}, 5000);
+		}, 5000);*/
 	};
 
 	self.updateBlockchainDataTimer = function(){
-		setInterval(function(){
+		/*setInterval(function(){
 			self.updateBlockchainData();
-		}, 5000);
+		}, 5000);*/
 	};
 
 	self.updateTransactionData = function(){
-		$.get("api/transactions.txt", function(data){
-			var dataJson = "[" + data.replace(/}{/g,"}\,{") + "]";
-			var transactions = jQuery.parseJSON(dataJson);
-			var liTrans = "";
-			self.model.transactionsPending([]);
-			for(var key in transactions){
-				liTrans += "<li>" + JSON.stringify(transactions[key]) + "</li>";
-				self.model.transactionsPending.push(transactions[key]);
-			};
-			$("#pendingTransactions").html(liTrans);
-		});
+		$.ajax({
+            type: "GET",
+            url: "api/getNewData.php?dataType=transactions&timestamp="  + self.timestampTransaction ,
+            async: true,
+            cache: false,
+            timeout:50000,
+
+            success: function(response){ 
+                
+            	if(response == null || response == ""){
+            		self.model.transactionsPending([]);
+            		$("#pendingTransactions").html("");
+            		return;
+            	}
+
+                var json = JSON.parse(response);
+                self.timestampTransaction = json.timestamp;
+                var data = json.data;
+                var dataJson = "[" + data.replace(/}{/g,"}\,{") + "]";
+				var transactions = jQuery.parseJSON(dataJson);
+				var liTrans = "";
+				self.model.transactionsPending([]);
+				for(var key in transactions){
+					liTrans += "<li>" + JSON.stringify(transactions[key]) + "</li>";
+					self.model.transactionsPending.push(transactions[key]);
+				};
+				$("#pendingTransactions").html(liTrans);
+				setTimeout(function(){
+            		self.updateTransactionData();
+            	},1000);
+            },
+            complete:function(){
+                setTimeout(function(){
+            		self.updateTransactionData();
+            	},1000);
+            }
+        });
 	};
 
 	self.updateBlockchainData = function(){
-		$.get("api/blockchain.txt", function(data){
-			if(data == null || data == "")
-				return;
+		$.ajax({
+            type: "GET",
+            url: "api/getNewData.php?dataType=blockchain&timestamp=" + self.timestampBlockchain,
+            async: true,
+            cache: false,
+            timeout:50000,
 
-			var dataJson = "[" + data + "]";
-			var jQueryData = jQuery.parseJSON((dataJson));
-			var liTrans = "";
-			for(var key in jQueryData){
-				liTrans += "<li>" + jQueryData[key].hash + "</li>";
-			};
-			$("#blockchain").html(liTrans);
-		});
+            success: function(response){ 
+                
+            	if(response == null || response == ""){
+            		self.blockchain = [];
+            		$("#blockchain").html("");
+            		return;
+            	}
+
+                var json = JSON.parse(response);
+                self.timestampBlockchain = json.timestamp;
+                var data = json.data;
+				var dataJson = "[" + data + "]";
+				var jQueryData = jQuery.parseJSON((dataJson));
+				var liTrans = "";
+				for(var key in jQueryData){
+					liTrans += "<li class='block_element' data-block='" + JSON.stringify(jQueryData[key]) + "'><a href='#'>" + jQueryData[key].hash + "</a></li>";
+				};
+				self.blockchain = jQueryData;
+				$("#blockchain").html(liTrans);
+				setTimeout(function(){
+            		self.updateBlockchainData();
+            	},1000);
+            },
+            complete:function(){
+            	setTimeout(function(){
+            		self.updateBlockchainData();
+            	},1000);
+            }
+        });
 	};
 
 	self.updateTransactionDataTimer();

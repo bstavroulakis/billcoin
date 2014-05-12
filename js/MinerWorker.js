@@ -28,7 +28,7 @@ self.addEventListener('message', function(e) {
   };
 }, false);
 
-
+//The Sha256 Algorithm - To be removed
 var Sha256 = function(){
 
 	var self = this;

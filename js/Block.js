@@ -17,6 +17,7 @@ var Block = function(){
 		self.transactionsAll = [];
 		self.transactions = transactions;
 		self.coinbase = new BillcoinTransaction();
+		console.log(selectedWallet.address(),selectedWallet.wifCompressed());
 		self.coinbase.generate( "Generate", selectedWallet, 50 );
 
 		if(transactions.length > 0){
@@ -29,6 +30,10 @@ var Block = function(){
 				hashes.push(transactions[key].hash);
 			}
 			self.merkleRoot = self.merkleHash(hashes);
+		}else{
+			var coinbaseTx = JSON.parse(self.coinbase.txJson);
+			transactions.push(coinbaseTx);
+			self.merkleRoot = coinbaseTx.hash;
 		}
 
 		self.transactionsAll = transactions;
@@ -47,7 +52,6 @@ var Block = function(){
 	    		break;
 	    	}
 	    	newHash.push(self.hashAb(hashes[key], hashes[key + 1]));
-	    	//return;
 	    }
 	    if(hashes.length % 2 == 1){
 	    	var last = hashes[hashes.length-1];
@@ -70,46 +74,43 @@ var Block = function(){
 	self.startMining = function(transactions, selectedWallet, previousBlock){
 
 		var sha256 = new Sha256();
-
 		self.miningWorker = new Worker("js/MinerWorker.js");
 
 		self.miningWorker.addEventListener('message', function(e) {
+
 			self.stopMining();
-			var sha256 = new Sha256();
 			if(e.data.success){
 
 				self.nonce = e.data.nonce;
-				console.log(self.hashCore + self.nonce);
 				self.hash = sha256.generate(self.hashCore + self.nonce);
 				
 				$("#mining_nonce").html("Found nonce! Sending request");
 
 				var postObj = {
-						hash : self.hash,
-						transactions : self.transactionsAll,
-						previousBlock : self.previousBlock,
-						timestamp : self.timestamp,
-						merkleRoot : self.merkleRoot,
-						nonce : self.nonce
-					};
+					hash : self.hash,
+					transactions : self.transactionsAll,
+					previousBlock : self.previousBlock,
+					timestamp : self.timestamp,
+					merkleRoot : self.merkleRoot,
+					nonce : self.nonce
+				};
 
 				$.post("api/sendNewBlock.php",{
 					block:postObj,
 					blockStr:JSON.stringify(postObj)
 				},function(response){
+					
+					console.log(response);
+					response = JSON.parse(response);
 
 					if(response.success){
 
 					}else{
 						alert("Error while sending block");
 					}
-
-				})
-
+				});
 			}else{
-
 				$("#mining_nonce").html(event.nonce);
-
 			}
 		}, false);
 
@@ -125,14 +126,7 @@ var Block = function(){
 	};
 
 	self.stopMining = function(){
-
 		billcoin.model.mining.running(false);
-		/*self.miningWorker.postMessage(
-			{ 
-				"cmd" : "stop" 
-			}
-		);*/
-
 	};
 
 };
