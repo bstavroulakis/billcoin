@@ -15,6 +15,7 @@
 <script src="js/lib/Opcode.js"></script>
 <script src="js/lib/Script.js"></script>
 <script src="js/lib/ECKeyLegacy.js"></script>
+<script src="js/lib/Utils.js"></script>
 
 <script src="js/BitcoinAddress.js"></script>
 <script src="js/BillcoinTransaction.js"></script>
@@ -46,7 +47,7 @@ $(document).ready(function(){
 
 	<header class="top_header">
 		<img src="http://bstavroulakis.com/blog/wp-content/uploads/2014/04/billcoin.png" class="billcoin_logo left"/>
-		<h1 class="padding left">Billcoin</h1>
+		<h1 class="padding left">Billcoin - Learn Bitcoin in 4 easy steps</h1>
 		<div class="right green_button">
 			Total Billcoins: <span data-bind="text:totalBalance"></span>
 		</div>
@@ -97,8 +98,8 @@ $(document).ready(function(){
 
 	<section>
 		<header>		
-			<h2 class="section_header">Step 1 - Wallets</h2>
-			<span class="margin_left">
+			<h2 class="section_header">Step 1 - Your Billcoin Wallets</h2>
+			<span class="margin_left step_link">
 				<a target="_blank" href="http://bstavroulakis.com/blog/?p=284">http://bstavroulakis.com/blog/?p=284</a>
 			</span>
 		</header>		
@@ -136,8 +137,8 @@ $(document).ready(function(){
 
 	<section>
 		<header>
-			<h2 class="section_header">Step 2 - Block Chain</h2>
-			<span class="margin_left">
+			<h2 class="section_header">Step 2 - Billcoin Block Chain</h2>
+			<span class="margin_left step_link">
 				<a target="_blank" href="http://bstavroulakis.com/blog/?p=286">http://bstavroulakis.com/blog/?p=286</a>
 			</span>
 		</header>
@@ -148,7 +149,7 @@ $(document).ready(function(){
 	<section>
 		<header>		
 			<h2 class="section_header">Step 3 - Pending Transactions</h2>
-			<span class="margin_left">
+			<span class="margin_left step_link">
 				<a target="_blank" href="http://bstavroulakis.com/blog/?p=344">http://bstavroulakis.com/blog/?p=344</a>
 			</span>
 		</header>		
@@ -158,8 +159,8 @@ $(document).ready(function(){
 
 	<section>
 		<header>
-			<h2 class="section_header">Step 4 - Mining</h2>
-			<span class="margin_left">
+			<h2 class="section_header step_link">Step 4 - Mining</h2>
+			<span class="margin_left step_link">
 				<a target="_blank" href="http://bstavroulakis.com/blog/?p=288">http://bstavroulakis.com/blog/?p=288</a>
 			</span>
 		</header>
@@ -169,7 +170,7 @@ $(document).ready(function(){
 		Select a wallet to send wining Billcoins to:
 		</span>
 		<select id="miner_wallet" data-bind="foreach:wallets">
-			<option data-bind="text:address,value:address,attr:{'data-private':wifCompressed}"></option>
+			<option data-bind="text:address,value:address,attr:{'data-private':wifCompressed,'data-hash160':publicHash160}"></option>
 		</select>
 		<button class="gray_button right full block start_mining">
 			<a href="javascript:void(0)" data-bind="visible:(!mining.running())">Start Mining</a>

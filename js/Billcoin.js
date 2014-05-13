@@ -32,7 +32,8 @@ var Billcoin = function(){
 				var selectedWalletVal = $("#newTx .wallets").find(":selected").val();				
 				for(var key in self.model.wallets()){
 					if(self.model.wallets()[key].address() == selectedWalletVal){
-						selectedWallet = { address : self.model.wallets()[key].address, wifCompressed : self.model.wallets()[key].wifCompressed };
+						selectedWallet = { address : self.model.wallets()[key].address, wifCompressed : self.model.wallets()[key].wifCompressed,
+						publicHash160:self.model.wallets()[key].publicHash160 };
 					}
 				};
 				billcoinTx.generate( selectedWallet, $("#newTxToAddress").val(), $("#newTxAmount").val() );
@@ -47,7 +48,8 @@ var Billcoin = function(){
 				var selectedWalletVal = $("#newTx .wallets").find(":selected").val();
 				for(var key in self.model.wallets()){
 					if(self.model.wallets()[key].address() == selectedWalletVal){
-						selectedWallet = { address : self.model.wallets()[key].address, wifCompressed : self.model.wallets()[key].wifCompressed };
+						selectedWallet = { address : self.model.wallets()[key].address, wifCompressed : self.model.wallets()[key].wifCompressed,
+						publicHash160:self.model.wallets()[key].publicHash160 };
 					}
 				};
 				billcoinTx.generate( selectedWallet, $("#newTxToAddress").val(),$("#newTxAmount").val() );
@@ -129,7 +131,8 @@ var Billcoin = function(){
 			alert("Create a wallet first before mining.");
 		}else{
 			self.block.startMining(ko.mapping.toJS(self.model.transactionsPending), 
-				{address:ko.observable(wallet.val()), wifCompressed:ko.observable(wallet.attr("data-private"))},
+				{address:ko.observable(wallet.val()), wifCompressed:ko.observable(wallet.attr("data-private")), 
+					publicHash160:ko.observable(wallet.attr("data-hash160"))},
 				previousBlockHash);
 		}
 
@@ -155,7 +158,8 @@ var Billcoin = function(){
 		wallet.generate();
 		self.model.wallets.push({
 			address:ko.observable(wallet.address),
-			wifCompressed:ko.observable(wallet.wifCompressed)
+			wifCompressed:ko.observable(wallet.wifCompressed),
+			publicHash160:ko.observable(wallet.publicHash160)
 		});
 		localStorage.setItem("wallets", JSON.stringify(ko.mapping.toJS(self.model.wallets)));
 	};
@@ -188,7 +192,8 @@ var Billcoin = function(){
             		var importWallet = loadData[key];
             		self.model.wallets.push({
 						address:ko.observable(importWallet.address),
-						wifCompressed:ko.observable(importWallet.wifCompressed)
+						wifCompressed:ko.observable(importWallet.wifCompressed),
+						publicHash160:ko.observable(importWallet.publicHash160)
 					});
             	}
             };
@@ -196,18 +201,6 @@ var Billcoin = function(){
 	};
 
 	self.setupWallets();
-
-	self.updateTransactionDataTimer = function(){
-		/*setInterval(function(){
-			self.updateTransactionData();
-		}, 5000);*/
-	};
-
-	self.updateBlockchainDataTimer = function(){
-		/*setInterval(function(){
-			self.updateBlockchainData();
-		}, 5000);*/
-	};
 
 	self.updateTransactionData = function(){
 		$.ajax({
@@ -288,8 +281,6 @@ var Billcoin = function(){
         });
 	};
 
-	self.updateTransactionDataTimer();
-	self.updateBlockchainDataTimer();
 	self.updateTransactionData();
 	self.updateBlockchainData();
 

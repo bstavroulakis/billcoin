@@ -35,30 +35,44 @@ var BillcoinTransaction = function(){
 		self.key = key;
 	};
 
-	self.generate = function(senderWallet, receiver, amount){
+	self.generate = function(senderWallet, receiver, amount, receiverHash160){
     
     var senderAddress = "";
     if(senderWallet != "Generate"){
 		  self.priv2key(senderWallet.wifCompressed());
-      senderAddress = senderWallet.address();
+      senderAddress = senderWallet.publicHash160();
     }
 		$.ajax({
         	url : self.mainDomain + "getTxHistory.php?address=" + senderAddress,
           async:false,
         	success : function (data) {
 
+            var dataJson = {};
+            if(data != null && data != []){
+              data = JSON.parse(data);
+              for(var key in data){
+                dataJson[data[key].hash] = data[key];
+              }
+            }
+
+if(senderWallet == "Generate"){
+  //dataJson = '"test":{"hash":"test","ver":1,"vin_sz":1,"vout_sz":1,"lock_time":0,"in":[{"prev_out":{"hash":"0000000000000000000000000000000000000000000000000000000000000000","n":4294967295},"coinbase":"0375950411627920706f6c6d696e652e706c5371059dfabe6d6d24b1a7c66e7f2bfd4fd1bf3e805eb901eea695c3bb804bd5346f79bc0dd5f15601000000000000000400000000004414"}],"out":[{"value":"50","scriptPubKey":"OP_DUP OP_HASH160 ' + receiverHash160 + ' OP_EQUALVERIFY OP_CHECKSIG"}]}';
+}
+            
+            dataJson = JSON.stringify(dataJson);
+
         		var transaction = new TX();
         		transaction.init(self.key);
             if(senderWallet != "Generate")
-        		  transaction.parseInputs(data, senderWallet.address());
+        		  transaction.parseInputs(dataJson, senderWallet.address());
+            else
+              transaction.parseInputs(dataJson, "");
         		transaction.addOutput(receiver, amount);
 			      var sendTx = transaction.construct();
-
             var superSerial = sendTx.serialize();
             self.txJson = transaction.toBBE(sendTx);
             self.txRaw = bytesToHex(superSerial);
             self.balance = bignum2btcstr(transaction.balance);
-
             $(".balance").html(self.balance);
             $(".transaction_output").html(self.txJson);
             $(".json_output").html(self.txRaw);

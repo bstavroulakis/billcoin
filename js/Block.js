@@ -11,27 +11,30 @@ var Block = function(){
 	self.hashCore = "";
 	self.coinbase = "";
 	self.transactionsAll = [];	
+	self.ripemd160 = new Ripemd160();
+	self.sha256 = new Sha256();
 
 	self.init = function(transactions, selectedWallet, previousBlock){
 
 		self.transactionsAll = [];
 		self.transactions = transactions;
 		self.coinbase = new BillcoinTransaction();
-		console.log(selectedWallet.address(),selectedWallet.wifCompressed());
-		self.coinbase.generate( "Generate", selectedWallet, 50 );
+		self.coinbase.generate( "Generate", selectedWallet, 50, selectedWallet.publicHash160() );
+
+		var coinbaseTx = JSON.parse(self.coinbase.txJson);
+		//var pubKey = coinbaseTx.out[0].scriptPubKey;
+		//coinbaseTx.out[0].scriptPubKey = pubKey.replace("OP_EQUALVERIFY OP_CHECKSIG",selectedWallet.publicHash160() + " OP_EQUALVERIFY OP_CHECKSIG");
 
 		if(transactions.length > 0){
 			var rev = transactions.reverse();
-			rev.push(JSON.parse(self.coinbase.txJson));
+			rev.push(coinbaseTx);
 			transactions = rev.reverse();
-
 			var hashes = [];
 			for(var key in transactions){
 				hashes.push(transactions[key].hash);
 			}
 			self.merkleRoot = self.merkleHash(hashes);
 		}else{
-			var coinbaseTx = JSON.parse(self.coinbase.txJson);
 			transactions.push(coinbaseTx);
 			self.merkleRoot = coinbaseTx.hash;
 		}

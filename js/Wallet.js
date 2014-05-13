@@ -12,6 +12,7 @@ var Wallet = function(){
 
 	self.publicKeyHex = "";
 	self.publicKeyBytes = "";
+	self.publicHash160 = "";
 
 	self.address = "";
 
@@ -88,6 +89,7 @@ var Wallet = function(){
 	self.generateWallet = function(){
 		//Crypto.RIPEMD160(Crypto.SHA256(e,{asBytes:!0}),{asBytes:!0})}
 		var hash160 = self.ripemd160.generate(self.sha256.generate(self.publicKeyBytes,{asBytes:true}),{asBytes:false});
+		self.publicHash160 = hash160;
 		//console.log(hash160);
 		//var hash160 = self.ripemd160.generate(self.hexToBytes(self.sha256.generate(self.publicKeyBytes)));
 		var hashAndBytes = self.hexToBytes(hash160);
