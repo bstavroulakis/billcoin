@@ -19,11 +19,30 @@ var Block = function(){
 		self.transactionsAll = [];
 		self.transactions = transactions;
 		self.coinbase = new BillcoinTransaction();
-		self.coinbase.generate( "Generate", selectedWallet, 50, selectedWallet.publicHash160() );
+		self.coinbase.generate( "Generate", selectedWallet, 50 );
+
+		var bitAddress = new BitcoinAddress(selectedWallet.address());
+      	var addressHash160 = Utils.bytesToHex(bitAddress.hash);
+
+      	var coinbaseRandArr = new Uint8Array(32);
+		window.crypto.getRandomValues(coinbaseRandArr);
+		var coinbaseKeyBytes = [];
+		for (var i = 0; i < coinbaseRandArr.length; ++i)
+		  coinbaseKeyBytes[i] = coinbaseRandArr[i];
+		var coinbaseHex = Utils.bytesToHex(coinbaseKeyBytes).toUpperCase();
+
+		self.coinbase.txJson = 
+			self.coinbase.txJson.replace('"in": []','"in" : [{"prev_out":{"hash":"0000000000000000000000000000000000000000000000000000000000000000","n":4294967295},"coinbase":\"' + coinbaseHex + '\","sequence":0}]');
+
+		var addrVal = selectedWallet.address();
+		self.coinbase.txJson = 
+			self.coinbase.txJson.replace("OP_DUP OP_HASH160  OP_EQUALVERIFY OP_CHECKSIG\"","OP_DUP OP_HASH160 " + addressHash160 + " OP_EQUALVERIFY OP_CHECKSIG\"");
+		
+		self.coinbase.txJson = 
+			self.coinbase.txJson.replace("\"address\": {}", "\"address\":\"" + addrVal + "\"");
 
 		var coinbaseTx = JSON.parse(self.coinbase.txJson);
-		//var pubKey = coinbaseTx.out[0].scriptPubKey;
-		//coinbaseTx.out[0].scriptPubKey = pubKey.replace("OP_EQUALVERIFY OP_CHECKSIG",selectedWallet.publicHash160() + " OP_EQUALVERIFY OP_CHECKSIG");
+		coinbaseTx.hash = self.sha256.generate(coinbaseTx.hash + coinbaseHex);
 
 		if(transactions.length > 0){
 			var rev = transactions.reverse();
@@ -78,17 +97,13 @@ var Block = function(){
 
 		var sha256 = new Sha256();
 		self.miningWorker = new Worker("js/MinerWorker.js");
-
 		self.miningWorker.addEventListener('message', function(e) {
 
 			self.stopMining();
 			if(e.data.success){
-
 				self.nonce = e.data.nonce;
-				self.hash = sha256.generate(self.hashCore + self.nonce);
-				
+				self.hash = sha256.generate(self.hashCore + self.nonce);				
 				$("#mining_nonce").html("Found nonce! Sending request");
-
 				var postObj = {
 					hash : self.hash,
 					transactions : self.transactionsAll,
@@ -97,18 +112,12 @@ var Block = function(){
 					merkleRoot : self.merkleRoot,
 					nonce : self.nonce
 				};
-
 				$.post("api/sendNewBlock.php",{
 					block:postObj,
 					blockStr:JSON.stringify(postObj)
 				},function(response){
-					
-					console.log(response);
 					response = JSON.parse(response);
-
-					if(response.success){
-
-					}else{
+					if(!response.success){
 						alert("Error while sending block");
 					}
 				});
@@ -120,12 +129,10 @@ var Block = function(){
 		billcoin.model.mining.running(true);
 		self.init(transactions, selectedWallet, previousBlock);
 		self.hashCore = self.previousBlock + self.merkleRoot + self.timestamp;
-		self.miningWorker.postMessage(
-			{
-				'cmd': 'start', 
-				'hash': self.hashCore
-			}					
-		);
+		self.miningWorker.postMessage({
+			'cmd': 'start', 
+			'hash': self.hashCore
+		});
 	};
 
 	self.stopMining = function(){

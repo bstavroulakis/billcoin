@@ -129,7 +129,8 @@ $(document).ready(function(){
 		<ul class="padding wrap" data-bind="foreach:wallets">
 			<li>
 				<b>Address:</b> <span data-bind="text:address"></span><br/>
-				<b>Private Key:</b> <span data-bind="text:wifCompressed"></span>
+				<b>Private Key:</b> <span data-bind="text:wifCompressed"></span><br/>
+				<b>Public Key:</b> <span data-bind="text:publicKey"></span>
 				<div class="clearfix"><br/></div>
 			</li>
 		</ul>
@@ -170,7 +171,7 @@ $(document).ready(function(){
 		Select a wallet to send wining Billcoins to:
 		</span>
 		<select id="miner_wallet" data-bind="foreach:wallets">
-			<option data-bind="text:address,value:address,attr:{'data-private':wifCompressed,'data-hash160':publicHash160}"></option>
+			<option data-bind="text:address,value:address,attr:{'data-private':wifCompressed,'data-publickey':publicKey}"></option>
 		</select>
 		<button class="gray_button right full block start_mining">
 			<a href="javascript:void(0)" data-bind="visible:(!mining.running())">Start Mining</a>

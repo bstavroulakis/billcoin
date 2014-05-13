@@ -36,22 +36,22 @@
   {
     var buffer = [];
     buffer = buffer.concat(wordsToBytes([parseInt(this.version)]).reverse());
-    buffer = buffer.concat(numToVarInt(this.ins.length));
+    buffer = buffer.concat(Utils.numToVarInt(this.ins.length));
     for (var i = 0; i < this.ins.length; i++) {
       var txin = this.ins[i];
       buffer = buffer.concat(base64ToBytes(txin.outpoint.hash));
       buffer = buffer.concat(wordsToBytes([parseInt(txin.outpoint.index)]).reverse());
       var scriptBytes = txin.script.buffer;
-      buffer = buffer.concat(numToVarInt(scriptBytes.length));
+      buffer = buffer.concat(Utils.numToVarInt(scriptBytes.length));
       buffer = buffer.concat(scriptBytes);
       buffer = buffer.concat(wordsToBytes([parseInt(txin.sequence)]).reverse());
     }
-    buffer = buffer.concat(numToVarInt(this.outs.length));
+    buffer = buffer.concat(Utils.numToVarInt(this.outs.length));
     for (var i = 0; i < this.outs.length; i++) {
       var txout = this.outs[i];
       buffer = buffer.concat(txout.value);
       var scriptBytes = txout.script.buffer;
-      buffer = buffer.concat(numToVarInt(scriptBytes.length));
+      buffer = buffer.concat(Utils.numToVarInt(scriptBytes.length));
       buffer = buffer.concat(scriptBytes);
     }
     buffer = buffer.concat(wordsToBytes([parseInt(this.lock_time)]).reverse());
@@ -122,7 +122,7 @@ Transaction.prototype.hashTransactionForSignature =
 }
 
 
-  Transaction.prototype.addOutput = function (address, value) {
+  Transaction.prototype.addOutput = function (address, value, hexAddress) {
     if (arguments[0] instanceof TransactionOut) {
       this.outs.push(arguments[0]);
     } else {
@@ -135,7 +135,8 @@ Transaction.prototype.hashTransactionForSignature =
 
       this.outs.push(new TransactionOut({
         value: value,
-        script: Script.createOutputScript(address)
+        script: Script.createOutputScript(address),
+        address:hexAddress
       }));
     }
   };

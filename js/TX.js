@@ -46,7 +46,7 @@ var TX = function () {
 	        if (Opcode.map.hasOwnProperty(s[i])){
 	            newScript.writeOp(Opcode.map[s[i]]);
 	        } else {
-	            newScript.writeBytes(hexToBytes(s[i]));
+	            newScript.writeBytes(Utils.hexToBytes(s[i]));
 	        }
 	    }
 	    return newScript;
@@ -64,7 +64,7 @@ var TX = function () {
                 if (!self.inputs[hash].hasOwnProperty(index))
                     continue;
                 var script = self.parseScript(self.inputs[hash][index].script);
-                var b64hash = bytesToBase64(hexToBytes(hash));
+                var b64hash = Utils.bytesToBase64(Utils.hexToBytes(hash));
                 var txin = new TransactionIn({outpoint: {hash: b64hash, index: index}, script: script, sequence: 4294967295});
                 selectedOuts.push(txin);
                 if (!resign)
@@ -78,7 +78,7 @@ var TX = function () {
             var value = new BigInteger('' + Math.round(fval * 1e8), 10);
             if (!resign){
               var bitAddress = new BitcoinAddress(address);
-              sendTx.addOutput(bitAddress, value);
+              sendTx.addOutput(bitAddress, value, address);
           	}
         }
 
@@ -104,7 +104,7 @@ var TX = function () {
         var sha256 = new Sha256();
         var hash = sha256.generate(sha256.generate(buf, {asBytes: true}), {asBytes: true});
         var r = {};
-        r['hash'] = bytesToHex(hash.reverse());
+        r['hash'] = Utils.bytesToHex(hash.reverse());
         r['ver'] = sendTx.version;
         r['vin_sz'] = sendTx.ins.length;
         r['vout_sz'] = sendTx.outs.length;
@@ -117,11 +117,11 @@ var TX = function () {
             var txin = sendTx.ins[i];
             var hash = base64ToBytes(txin.outpoint.hash);
             var n = txin.outpoint.index;
-            var prev_out = {'hash': bytesToHex(hash.reverse()), 'n': n};
+            var prev_out = {'hash': Utils.bytesToHex(hash.reverse()), 'n': n};
             var seq = txin.sequence;
 
             if (n == 4294967295) {
-                var cb = bytesToHex(txin.script.buffer);
+                var cb = Utils.bytesToHex(txin.script.buffer);
                 r['in'].push({'prev_out': prev_out, 'coinbase' : cb, 'sequence':seq});
             } else {
                 var ss = dumpScript(txin.script);
@@ -135,7 +135,7 @@ var TX = function () {
             var fval = parseFloat(self.formatValue(bytes.reverse()));
             var value = fval.toFixed(8);
             var spk = dumpScript(txout.script);
-            r['out'].push({'value' : value, 'scriptPubKey': spk});
+            r['out'].push({'value' : value, 'scriptPubKey': spk, 'address':txout.address});
         }
 
         return JSON.stringify(r, null, 4);
@@ -190,7 +190,7 @@ var TX = function () {
 					continue;
 				var input = tx.in[b];
 				var p = input.prev_out;
-				var lilendHash = endian(p.hash)
+				var lilendHash = Utils.endian(p.hash)
 				// if this came from a transaction to our address...
 				if (lilendHash in unspenttxs) {
 					unspenttx = unspenttxs[lilendHash];
@@ -198,7 +198,7 @@ var TX = function () {
 					// remove from unspent transactions, and deduce the amount from the balance
 					balance = balance.subtract(unspenttx[p.n].amount);
 					delete unspenttx[p.n]
-					if (isEmpty(unspenttx)) {
+					if (Utils.isEmpty(unspenttx)) {
 						delete unspenttxs[lilendHash]
 					}
 				}
@@ -215,42 +215,20 @@ var TX = function () {
 				// if this was sent to our address...
 				if (output.address == address) {
 					// remember the transaction, index, amount, and script, and add the amount to the wallet balance
-					var value = btcstr2bignum(output.value);
-					var lilendHash = endian(tx.hash)
+					var value = Utils.btcstr2bignum(output.value);
+					var lilendHash = Utils.endian(tx.hash)
 					if (!(lilendHash in unspenttxs))
 						unspenttxs[lilendHash] = {};
-					unspenttxs[lilendHash][i] = {amount: value, script: output.scriptPubKey};
+					unspenttxs[lilendHash][i] = {amount: value, script: output.scriptPubKey, address:address};
 					balance = balance.add(value);
 				}
 				i = i + 1;
 			}
 		}
+
 		return {balance:balance, unspenttxs:unspenttxs};
 	};
 };
-
-var bytesToString = function (bytes) {
-	for (var str = [], i = 0; i < bytes.length; i++)
-		str.push(String.fromCharCode(bytes[i]));
-	return str.join("");
-};
-
-var bytesToBase64 = function (bytes) {
-
-	if (typeof btoa == "function") return btoa(bytesToString(bytes));
-
-	for(var base64 = [], i = 0; i < bytes.length; i += 3) {
-	  var triplet = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2];
-	  for (var j = 0; j < 4; j++) {
-	    if (i * 8 + j * 6 <= bytes.length * 8)
-	      base64.push(base64map.charAt((triplet >>> 6 * (3 - j)) & 0x3F));
-	    else base64.push("=");
-	  }
-	}
-
-	return base64.join("");
-};
-
 
 var valueToBigInt = function (valueBuffer)
 {
@@ -264,7 +242,7 @@ var dumpScript = function(script) {
         var chunk = script.chunks[i];
         var op = new Opcode(chunk);
         typeof chunk == 'number' ?  out.push(op.toString()) :
-            out.push(bytesToHex(chunk));
+            out.push(Utils.bytesToHex(chunk));
     }
     return out.join(' ');
 }

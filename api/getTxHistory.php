@@ -2,23 +2,43 @@
 	
 	header('Access-Control-Allow-Origin: *');  
 	$address = $_REQUEST["address"];
+	$publicKey = $_REQUEST["publicKey"];
 	$transactions = [];
 
 	$blockchainTxt = file_get_contents("blockchain.txt");
 	$blockchainTxt = "[" . $blockchainTxt . "]";
 	$blockchain = json_decode($blockchainTxt);
 
+//var_dump($blockchainTxt);
+
 	foreach($blockchain as $block){
 		$trans = $block->transactions;
 		foreach($trans as $t){
-			if($t->out[0]->scriptPubKey == "OP_DUP OP_HASH160  ".$address." OP_EQUALVERIFY OP_CHECKSIG"){
-				array_push($transactions, $t);
+			$found = false;
+			$outs = $t->out;
+			foreach($outs as $out){
+				$outAddress = $out->address;
+				if($outAddress == $address){
+					if(!$found){
+						array_push($transactions, $t);
+					}
+					$found = true;
+				}
+			}
+			$ins = $t->in;
+			foreach($ins as $in){
+				if(!property_exists($in,"scriptSig"))
+					continue;
+				$scriptSig = $in->scriptSig;
+				if (strpos($scriptSig,$publicKey) !== false) {
+					if(!$found){
+						array_push($transactions, $t);
+					}
+					$found = true;
+				}
 			}
 		}
 	}
-
-	//preg_match_all("/{\"hash\":\".*cc3525597c58e807200e497ca70d85035c2deddd OP_EQUALVERIFY OP_CHECKSIG\"}]}]/", $blockchainTxt, $transactions);
-	//var_dump($transactions);
 
 	echo(json_encode($transactions));
 

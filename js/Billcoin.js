@@ -14,7 +14,6 @@ var Billcoin = function(){
 
 	self.block = new Block();
 	self.blockchain = [];
-
 	self.timestampBlockchain = "";
 	self.timestampTransaction = "";
 
@@ -32,15 +31,15 @@ var Billcoin = function(){
 				var selectedWalletVal = $("#newTx .wallets").find(":selected").val();				
 				for(var key in self.model.wallets()){
 					if(self.model.wallets()[key].address() == selectedWalletVal){
-						selectedWallet = { address : self.model.wallets()[key].address, wifCompressed : self.model.wallets()[key].wifCompressed,
-						publicHash160:self.model.wallets()[key].publicHash160 };
+						selectedWallet = { 
+							address : self.model.wallets()[key].address, 
+							wifCompressed : self.model.wallets()[key].wifCompressed,
+							publicKey : self.model.wallets()[key].publicKey
+						};
 					}
 				};
 				billcoinTx.generate( selectedWallet, $("#newTxToAddress").val(), $("#newTxAmount").val() );
-				setTimeout(function(){
-					$("#newTxBalance").html(billcoinTx.balance);
-				},2000);
-				
+				$("#newTxBalance").html(billcoinTx.balance);				
 	      	},
 			"Add Transaction to Queue": function() {
 				var billcoinTx = new BillcoinTransaction();
@@ -48,18 +47,17 @@ var Billcoin = function(){
 				var selectedWalletVal = $("#newTx .wallets").find(":selected").val();
 				for(var key in self.model.wallets()){
 					if(self.model.wallets()[key].address() == selectedWalletVal){
-						selectedWallet = { address : self.model.wallets()[key].address, wifCompressed : self.model.wallets()[key].wifCompressed,
-						publicHash160:self.model.wallets()[key].publicHash160 };
+						selectedWallet = { 
+							address : self.model.wallets()[key].address, 
+							wifCompressed : self.model.wallets()[key].wifCompressed,
+							publicKey : self.model.wallets()[key].publicKey
+						};
 					}
 				};
 				billcoinTx.generate( selectedWallet, $("#newTxToAddress").val(),$("#newTxAmount").val() );
-				setTimeout(function(){
-					$("#newTxBalance").html(billcoinTx.balance);
-					$.post("api/sendNewTx.php",{transaction : billcoinTx.txJson, raw : billcoinTx.txRaw}, function(){
-
-					});
-					$( "#dialog-form" ).dialog( "close" );
-				},2000);
+				$("#newTxBalance").html(billcoinTx.balance);
+				$.post("api/sendNewTx.php",{transaction : billcoinTx.txJson, raw : billcoinTx.txRaw}, function(){});
+				$( "#dialog-form" ).dialog( "close" );
 	        }
 	      }
 		});
@@ -131,11 +129,12 @@ var Billcoin = function(){
 			alert("Create a wallet first before mining.");
 		}else{
 			self.block.startMining(ko.mapping.toJS(self.model.transactionsPending), 
-				{address:ko.observable(wallet.val()), wifCompressed:ko.observable(wallet.attr("data-private")), 
-					publicHash160:ko.observable(wallet.attr("data-hash160"))},
-				previousBlockHash);
+				{
+					address:ko.observable(wallet.val()), 
+					wifCompressed:ko.observable(wallet.attr("data-private")), 
+					publicKey:ko.observable(wallet.attr("data-publickey"))
+				}, previousBlockHash)
 		}
-
 	};
 
 	self.stopMining = function(){
@@ -159,7 +158,7 @@ var Billcoin = function(){
 		self.model.wallets.push({
 			address:ko.observable(wallet.address),
 			wifCompressed:ko.observable(wallet.wifCompressed),
-			publicHash160:ko.observable(wallet.publicHash160)
+			publicKey:ko.observable(wallet.publicKeyHex)
 		});
 		localStorage.setItem("wallets", JSON.stringify(ko.mapping.toJS(self.model.wallets)));
 	};
@@ -193,14 +192,12 @@ var Billcoin = function(){
             		self.model.wallets.push({
 						address:ko.observable(importWallet.address),
 						wifCompressed:ko.observable(importWallet.wifCompressed),
-						publicHash160:ko.observable(importWallet.publicHash160)
+						publicKey:ko.observable(importWallet.publicKey)
 					});
             	}
             };
         });
 	};
-
-	self.setupWallets();
 
 	self.updateTransactionData = function(){
 		$.ajax({
@@ -281,7 +278,22 @@ var Billcoin = function(){
         });
 	};
 
+	self.updateBalance = function(){
+		var total = 0;
+		var billcoinTx = new BillcoinTransaction();
+		for(var key=0; key <= self.model.wallets().length-1;key++){
+			billcoinTx.generate(self.model.wallets()[key],"1HZwkjkeaoZfTSaJxDw6aKkxp45agDiEzN",0);
+			total += parseFloat(billcoinTx.balance);
+		}
+		self.model.totalBalance(total);
+		setTimeout(function(){
+    		self.updateBalance();
+    	},5000);
+	};	
+
+	self.setupWallets();
 	self.updateTransactionData();
 	self.updateBlockchainData();
+	self.updateBalance();
 
 };

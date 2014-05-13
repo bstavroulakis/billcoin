@@ -14,6 +14,7 @@
 <script src="js/lib/Opcode.js"></script>
 <script src="js/lib/Script.js"></script>
 <script src="js/lib/ECKeyLegacy.js"></script>
+<script src="js/lib/Utils.js"></script>
 
 <script src="js/BitcoinAddress.js"></script>
 <script src="js/BillcoinTransaction.js"></script>
@@ -40,8 +41,8 @@
 			//var wallet = new Wallet();
 			//wallet.generate();
 			model.wallets.push({
-				address:ko.observable("1Q1qmwyVH7tzrCYa6pVCJCaMLFKVGeURag"),
-				wifCompressed:ko.observable("L12LAzDEKgiYsjVEshdaCSRrTJwMtJGJ3tww5Rr8nMU98fV114zg")
+				address:ko.observable("18YiM48jTQA36XJbgEJQqpGHRqgdpGidfJ"),
+				wifCompressed:ko.observable("5J8ko4S53Xnxa2b8txXp7caMxmQSCniNPQSdiqoUdnb2Ngk7ZP7")
 			});
 			model.wallets.push({
 				address:ko.observable("18XxFfNtzLr9kSUYfVdtcFNoskNnZFyYam"),
@@ -53,6 +54,9 @@
 
 		$("#generate_transaction").click(function(){
 			transaction.generate(model.wallets()[0], model.wallets()[1].address(), model.amount());
+			$(".balance").html(transaction.balance);
+            $(".transaction_output").html(transaction.txJson);
+            $(".json_output").html(transaction.txRaw);
 		});
 
 	});

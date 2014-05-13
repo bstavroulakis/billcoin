@@ -13,13 +13,15 @@
       while (valueHex.length < 16) valueHex = "0" + valueHex;
       this.value = hexToBytes(valueHex);
     }
+    this.address = data.address;
   };
 
   TransactionOut.prototype.clone = function ()
   {
     var newTxout = new TransactionOut({
       script: this.script.clone(),
-      value: this.value.slice(0)
+      value: this.value.slice(0),
+      address:this.address
     });
     return newTxout;
   };

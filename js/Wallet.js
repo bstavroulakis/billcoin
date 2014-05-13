@@ -72,26 +72,20 @@ var Wallet = function(){
 		self.publicKeyBytes = self.publicKeyBytes.concat(integerToBytes(y,32));
 		self.publicKeyBytes.unshift(0x04);
 		self.publicKeyHex = self.bytesToHex(self.publicKeyBytes);
-		//console.log(self.publicKeyHex);
-    
+
     	var publicKeyBytesCompressed = integerToBytes(x,32) //x from above
 		if (y.isEven())
 		  publicKeyBytesCompressed.unshift(0x02)
 		else
 		  publicKeyBytesCompressed.unshift(0x03)
 
-		//console.log(self.bytesToHex(publicKeyBytesCompressed));
 		self.publicKeyBytes = publicKeyBytesCompressed;
 		self.publicKeyHex = self.bytesToHex(publicKeyBytesCompressed);
-		//console.log(publicKeyHexCompressed);
 	};
 
 	self.generateWallet = function(){
-		//Crypto.RIPEMD160(Crypto.SHA256(e,{asBytes:!0}),{asBytes:!0})}
 		var hash160 = self.ripemd160.generate(self.sha256.generate(self.publicKeyBytes,{asBytes:true}),{asBytes:false});
 		self.publicHash160 = hash160;
-		//console.log(hash160);
-		//var hash160 = self.ripemd160.generate(self.hexToBytes(self.sha256.generate(self.publicKeyBytes)));
 		var hashAndBytes = self.hexToBytes(hash160);
 		hashAndBytes.unshift(0x00);
 		var doubleSHA = self.sha256.generate(self.hexToBytes(self.sha256.generate(hashAndBytes)));
