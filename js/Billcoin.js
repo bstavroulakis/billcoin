@@ -227,7 +227,7 @@ var Billcoin = function(){
             url: "api/getNewData.php?dataType=transactions&timestamp="  + self.timestampTransaction ,
             async: true,
             cache: false,
-            timeout:60000,
+            timeout:10000,
 
             success: function(response){ 
                 
@@ -249,14 +249,14 @@ var Billcoin = function(){
 					self.model.transactionsPending.push(transactions[key]);
 				};
 				$("#pendingTransactions").html(liTrans);
-				setTimeout(function(){
+				/*setTimeout(function(){
             		self.updateTransactionData();
-            	},5000);
+            	},10000);*/
             },
             complete:function(){
-                setTimeout(function(){
+                /*setTimeout(function(){
             		self.updateTransactionData();
-            	},5000);
+            	},10000);*/
             }
         });
 	};
@@ -267,7 +267,7 @@ var Billcoin = function(){
             url: "api/getNewData.php?dataType=blockchain&timestamp=" + self.timestampBlockchain,
             async: true,
             cache: false,
-            timeout:60000,
+            timeout:10000,
 
             success: function(response){ 
                 
@@ -288,14 +288,14 @@ var Billcoin = function(){
 				};
 				self.blockchain = jQueryData;
 				$("#blockchain").html(liTrans);
-				setTimeout(function(){
+				/*setTimeout(function(){
             		self.updateBlockchainData();
-            	},5000);
+            	},10000);*/
             },
             complete:function(){
-            	setTimeout(function(){
+            	/*setTimeout(function(){
             		self.updateBlockchainData();
-            	},5000);
+            	},10000);*/
             }
         });
 	};
@@ -315,6 +315,12 @@ var Billcoin = function(){
 	self.updateBlockchainData();
 	self.updateBalance();
 
+	setInterval(function(){
+		self.updateTransactionData();
+	},10000);
+	setInterval(function(){
+		self.updateBlockchainData();
+	},10000);
 	setInterval(function(){
 		self.updateBalance();
     		self.model.balanceUpdateTime(10);

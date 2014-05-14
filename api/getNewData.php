@@ -8,8 +8,10 @@
     }else{
     	$filename = "transactions.txt";
     }
+    
+    $currentmodif = 0;
 
-    $currentmodif = filemtime($filename);
+    /*$currentmodif = filemtime($filename);
     $lastmodif = isset( $_REQUEST['timestamp'])? $_REQUEST['timestamp']: 0 ;
 
     while ($currentmodif <= $lastmodif) {
@@ -17,7 +19,7 @@
         sleep(1);
         $currentmodif = filemtime($filename);
     }
-
+*/
     clearstatcache();
     ob_end_flush(); 
     flush(); 

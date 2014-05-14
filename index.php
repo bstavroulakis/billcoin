@@ -65,6 +65,16 @@ $(document).ready(function(){
 				Time to update: <span data-bind="text:balanceUpdateTime"></span>
 			</div>
 		</div>
+		<div class="right margin">
+			<a target="_blank" href="https://github.com/bstavroulakis/billcoin">
+				<img style="height:40px;" src="http://bstavroulakis.com/blog/wp-content/themes/bstavrou/images/github.png">
+			</a>
+		</div>
+		<div class="right margin_tb">
+			<a target="_blank" href="http://www.reddit.com/r/billcoin/">
+				<img style="height:40px;" src="images/reddit.jpg">
+			</a>
+		</div>		
 		<div class="clearfix"></div>
 	</header>
 
