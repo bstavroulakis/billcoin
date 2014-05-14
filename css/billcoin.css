@@ -1,4 +1,4 @@
-section{
+.section{
 	width:25%;
 	float:left;
 	border-right:1px solid #ccc;
@@ -23,7 +23,7 @@ h1{
 	display: block;
 }
 
-section header{
+.section header{
 	width: 100%;
 	background-color: #f1b44a;
 	box-sizing: border-box;
@@ -34,7 +34,7 @@ section header{
 	border-bottom:1px solid #222222;
 }
 
-section header a{
+.section header a{
 	color:#ffffff;
 }
 
@@ -57,7 +57,7 @@ section header a{
 	border-radius: 2px;
 	color:#ffffff;
 	padding:7px 25px;
-	margin:10px;
+	margin:10px 10px 0px 0px;
 }
 
 .gray_button{
@@ -147,4 +147,10 @@ button a{
 	  left: 50%;
 	  top: 50%;
 	  position: absolute;
+}
+
+.balance_timer{
+	color:#999999;
+	font-style: italic;
+	font-size:12px;
 }

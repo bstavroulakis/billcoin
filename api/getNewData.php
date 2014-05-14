@@ -18,6 +18,7 @@
         $currentmodif = filemtime($filename);
     }
 
+    clearstatcache();
     $content = file_get_contents($filename);
     $response = array();
 	$response['data'] = $content;

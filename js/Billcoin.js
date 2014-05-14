@@ -10,7 +10,7 @@ var Billcoin = function(){
 			running:false
 		},
 		totalBalance:0,
-		balanceUpdateTime:10
+		balanceUpdateTime:4
 	};
 
 	self.block = new Block();
@@ -26,7 +26,7 @@ var Billcoin = function(){
 	      width: 450,
 	      modal: true,
 	      buttons: {
-	      	"Calculate Balance":function(){
+	      	/*"Calculate Balance":function(){
 	      		var billcoinTx = new BillcoinTransaction();
 				var selectedWallet = "";
 				var selectedWalletVal = $("#newTx .wallets").find(":selected").val();				
@@ -41,7 +41,7 @@ var Billcoin = function(){
 				};
 				billcoinTx.generate( selectedWallet, $("#newTxToAddress").val(), $("#newTxAmount").val() );
 				$("#newTxBalance").html(billcoinTx.balance);				
-	      	},
+	      	},*/
 			"Add Transaction to Queue": function() {
 				var billcoinTx = new BillcoinTransaction();
 				var selectedWallet = "";
@@ -55,13 +55,22 @@ var Billcoin = function(){
 						};
 					}
 				};
-				billcoinTx.generate( selectedWallet, $("#newTxToAddress").val(),$("#newTxAmount").val() );
-				billcoin.showStoppage("Sending transaction to network. Please wait...");
-				$("#newTxBalance").html(billcoinTx.balance);
-				$.post("api/sendNewTx.php",{transaction : billcoinTx.txJson, raw : billcoinTx.txRaw}, function(){
-					billcoin.hideStoppage();
-				});
-				$( "#dialog-form" ).dialog( "close" );
+				if($("#newTxToAddress").val() == "" || $("#newTxToAddress").val() == null
+					|| $("#newTxAmount").val() == "" || $("#newTxAmount").val() == null){
+					alertify.error("You have to add a sender's address and an amount");
+				}else{
+					billcoinTx.generate( selectedWallet, $("#newTxToAddress").val(),$("#newTxAmount").val() );
+					if(billcoinTx.balance < parseFloat($("#newTxAmount").val())){
+						alertify.error("The wallet you are sending from has insufficient funds. Its balance is " + billcoinTx.balance + " and you are trying to send " + $("#newTxAmount").val());
+					}else{
+						billcoin.showStoppage("Sending transaction to network. Please wait...");
+						//$("#newTxBalance").html(billcoinTx.balance);
+						$.post("api/sendNewTx.php",{transaction : billcoinTx.txJson, raw : billcoinTx.txRaw}, function(){
+							billcoin.hideStoppage();
+						});
+						$( "#dialog-form" ).dialog( "close" );
+					}
+				}
 	        }
 	      }
 		});
@@ -169,7 +178,8 @@ var Billcoin = function(){
 		self.model.wallets.push({
 			address:ko.observable(wallet.address),
 			wifCompressed:ko.observable(wallet.wifCompressed),
-			publicKey:ko.observable(wallet.publicKeyHex)
+			publicKey:ko.observable(wallet.publicKeyHex),
+			balance:ko.observable(0)
 		});
 		localStorage.setItem("wallets", JSON.stringify(ko.mapping.toJS(self.model.wallets)));
 	};
@@ -203,7 +213,8 @@ var Billcoin = function(){
             		self.model.wallets.push({
 						address:ko.observable(importWallet.address),
 						wifCompressed:ko.observable(importWallet.wifCompressed),
-						publicKey:ko.observable(importWallet.publicKey)
+						publicKey:ko.observable(importWallet.publicKey),
+						balance:ko.observable(0)
 					});
             	}
             };
@@ -216,7 +227,7 @@ var Billcoin = function(){
             url: "api/getNewData.php?dataType=transactions&timestamp="  + self.timestampTransaction ,
             async: true,
             cache: false,
-            timeout:50000,
+            timeout:10000,
 
             success: function(response){ 
                 
@@ -256,7 +267,7 @@ var Billcoin = function(){
             url: "api/getNewData.php?dataType=blockchain&timestamp=" + self.timestampBlockchain,
             async: true,
             cache: false,
-            timeout:50000,
+            timeout:10000,
 
             success: function(response){ 
                 
@@ -300,7 +311,7 @@ var Billcoin = function(){
 		setTimeout(function(){
     		self.updateBalance();
     		self.model.balanceUpdateTime(10);
-    	},10000);
+    	},4000);
 	};	
 
 	self.setupWallets();

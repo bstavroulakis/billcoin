@@ -6,6 +6,9 @@
 <script src="js/jquery/jquery-ui.js"></script>
 <script src="js/jquery/knockout.js"></script>
 <script src="js/jquery/knockout.mapping.js"></script>
+<script src="js/jquery/alertify.min.js"></script>
+<link rel="stylesheet" href="js/jquery/alertify.core.css" />
+<link rel="stylesheet" href="js/jquery/alertify.default.css" />
 
 <script src="js/lib/BigInteger.js"></script>
 <script src="js/lib/Ripemd160.js"></script>
@@ -54,9 +57,13 @@ $(document).ready(function(){
 	<header class="top_header">
 		<img src="http://bstavroulakis.com/blog/wp-content/uploads/2014/04/billcoin.png" class="billcoin_logo left"/>
 		<h1 class="padding left">Billcoin - Learn Bitcoin in 4 easy steps</h1>
-		<div class="right green_button">
-			Total Billcoins: <span data-bind="text:totalBalance"></span><br/>
-			Time to update: <span data-bind="text:balanceUpdateTime"></span>
+		<div class="right">
+			<div class="green_button">
+				Total Billcoins: <span data-bind="text:totalBalance"></span>
+			</div>
+			<div class="balance_timer">
+				Time to update: <span data-bind="text:balanceUpdateTime"></span>
+			</div>
 		</div>
 		<div class="clearfix"></div>
 	</header>
@@ -85,10 +92,6 @@ $(document).ready(function(){
 		  			</td>
 		  		</tr>
 		  		<tr>
-		  			<td>Balance:</td>
-		  			<td id="newTxBalance"></td>
-		  		</tr>
-		  		<tr>
 		  			<td>
 		  				Amount:
 		  			</td>
@@ -103,7 +106,7 @@ $(document).ready(function(){
 
 	<div id="dialog-block"></div>
 
-	<section>
+	<section class="section">
 		<header>		
 			<h2 class="section_header">Step 1 - Your Billcoin Wallets</h2>
 			<span class="margin_left step_link">
@@ -143,7 +146,7 @@ $(document).ready(function(){
 		</ul>
 	</section>
 
-	<section>
+	<section class="section">
 		<header>
 			<h2 class="section_header">Step 2 - Billcoin Block Chain</h2>
 			<span class="margin_left step_link">
@@ -154,7 +157,7 @@ $(document).ready(function(){
 		<div id="blockchain"></div>
 	</section>
 
-	<section>
+	<section class="section">
 		<header>		
 			<h2 class="section_header">Step 3 - Pending Transactions</h2>
 			<span class="margin_left step_link">
@@ -165,7 +168,7 @@ $(document).ready(function(){
 		<ul id="pendingTransactions"></ul>
 	</section>
 
-	<section>
+	<section class="section">
 		<header>
 			<h2 class="section_header step_link">Step 4 - Mining</h2>
 			<span class="margin_left step_link">

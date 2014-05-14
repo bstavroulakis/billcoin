@@ -39,11 +39,12 @@
 
 		for(i=0; i<=2; i++){
 			model.wallets.push({
-				address:ko.observable("18YiM48jTQA36XJbgEJQqpGHRqgdpGidfJ"),
-				wifCompressed:ko.observable("5J8ko4S53Xnxa2b8txXp7caMxmQSCniNPQSdiqoUdnb2Ngk7ZP7")
+				address:ko.observable("1JbjdTRLCTdHFZFegW6MnHf2XfvdJN5Yk7"),
+				wifCompressed:ko.observable("Kyb96u1ALH2eHZH36rEUq3ciRHYyfba1QQK7nEiPPzwTNffA1ifj"),
+				publicKey:ko.observable("0267252dff4d69c8c42f425c971e306c18110e3d07ebdb4d7bc3a16299172f0e63")
 			});
 			model.wallets.push({
-				address:ko.observable("18XxFfNtzLr9kSUYfVdtcFNoskNnZFyYam"),
+				address:ko.observable("1wZYadwQCbRh8vXtqrLMxvxhED5A6u4V6"),
 				wifCompressed:ko.observable("")
 			});
 		}
@@ -76,6 +77,7 @@
 								<td>
 									Address<input class="full" type="text" data-bind="value:wallets()[0].address"/><br/>
 									Private Key<input class="full" type="text" data-bind="value:wallets()[0].wifCompressed"/>
+									Public Key<input class="full" type="text" data-bind="value:wallets()[0].publicKey"/>
 								</td>
 							</tr>
 							<tr>

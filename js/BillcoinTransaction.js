@@ -75,6 +75,9 @@ var BillcoinTransaction = function(){
             if(!isGenerate)
               transaction.parseInputs(dataJson, senderWallet.address());
         		transaction.addOutput(receiver, amount);
+            self.balance = Utils.bignum2btcstr(transaction.balance);
+            if(self.balance != 0)
+              transaction.addOutput(senderWallet.address(), self.balance - amount);
 			      var sendTx = transaction.construct();
             var superSerial = sendTx.serialize();
             self.txJson = transaction.toBBE(sendTx);
