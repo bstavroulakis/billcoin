@@ -42,8 +42,10 @@ var Wallet = function(){
 	};
 
 	self.generatePrivateKey = function(){
-		var randArr = new Uint8Array(32);
-		window.crypto.getRandomValues(randArr);
+		//var randArr = new Uint8Array(32);
+		//window.crypto.getRandomValues(randArr);
+		var rand = Math.random();
+		randArr = Utils.stringToBytes(rand);
 
 		//var randArr = self.sha256.generate("test", { asBytes: true });
        //var randArr = Crypto.util.bytesToHex(hash);

@@ -13,12 +13,16 @@
     $lastmodif = isset( $_REQUEST['timestamp'])? $_REQUEST['timestamp']: 0 ;
 
     while ($currentmodif <= $lastmodif) {
-        usleep(10000);
         clearstatcache();
+        sleep(1);
         $currentmodif = filemtime($filename);
     }
 
     clearstatcache();
+    ob_end_flush(); 
+    flush(); 
+    ob_start(); 
+    sleep(1);
     $content = file_get_contents($filename);
     $response = array();
 	$response['data'] = $content;

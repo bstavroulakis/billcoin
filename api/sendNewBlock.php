@@ -55,7 +55,7 @@
 
 	function check_block($blk){
 		$expectedHash = hash('sha256', $blk["previousBlock"].$blk["merkleRoot"].$blk["timestamp"].$blk["nonce"]);
-		if($expectedHash == $blk["hash"] && $blk["hash"][0] == 0){
+		if($expectedHash == $blk["hash"] && $blk["hash"][0] == 0 && $blk["hash"][1] == 0 && $blk["hash"][2] == 0 && $blk["hash"][3] == 0 && $blk["hash"][4] == 0){
 			return true;
 		}else{
 			return false;

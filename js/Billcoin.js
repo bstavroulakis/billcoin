@@ -10,7 +10,7 @@ var Billcoin = function(){
 			running:false
 		},
 		totalBalance:0,
-		balanceUpdateTime:4
+		balanceUpdateTime:10
 	};
 
 	self.block = new Block();
@@ -227,7 +227,7 @@ var Billcoin = function(){
             url: "api/getNewData.php?dataType=transactions&timestamp="  + self.timestampTransaction ,
             async: true,
             cache: false,
-            timeout:10000,
+            timeout:60000,
 
             success: function(response){ 
                 
@@ -251,12 +251,12 @@ var Billcoin = function(){
 				$("#pendingTransactions").html(liTrans);
 				setTimeout(function(){
             		self.updateTransactionData();
-            	},1000);
+            	},5000);
             },
             complete:function(){
                 setTimeout(function(){
             		self.updateTransactionData();
-            	},1000);
+            	},5000);
             }
         });
 	};
@@ -267,7 +267,7 @@ var Billcoin = function(){
             url: "api/getNewData.php?dataType=blockchain&timestamp=" + self.timestampBlockchain,
             async: true,
             cache: false,
-            timeout:10000,
+            timeout:60000,
 
             success: function(response){ 
                 
@@ -290,12 +290,12 @@ var Billcoin = function(){
 				$("#blockchain").html(liTrans);
 				setTimeout(function(){
             		self.updateBlockchainData();
-            	},1000);
+            	},5000);
             },
             complete:function(){
             	setTimeout(function(){
             		self.updateBlockchainData();
-            	},1000);
+            	},5000);
             }
         });
 	};
@@ -308,10 +308,6 @@ var Billcoin = function(){
 			total += parseFloat(billcoinTx.balance);
 		}
 		self.model.totalBalance(total);
-		setTimeout(function(){
-    		self.updateBalance();
-    		self.model.balanceUpdateTime(10);
-    	},4000);
 	};	
 
 	self.setupWallets();
@@ -319,6 +315,10 @@ var Billcoin = function(){
 	self.updateBlockchainData();
 	self.updateBalance();
 
+	setInterval(function(){
+		self.updateBalance();
+    		self.model.balanceUpdateTime(10);
+	},10000);
 	setInterval(function(){
 		self.model.balanceUpdateTime(self.model.balanceUpdateTime() - 1);
 	},1000);

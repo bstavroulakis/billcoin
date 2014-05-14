@@ -63,6 +63,8 @@ var TX = function () {
             for (var index in self.inputs[hash]) {
                 if (!self.inputs[hash].hasOwnProperty(index))
                     continue;
+                if(self.inputs[hash][index] == null)
+                    continue;
                 var script = self.parseScript(self.inputs[hash][index].script);
                 var b64hash = Utils.bytesToBase64(Utils.hexToBytes(hash));
                 var txin = new TransactionIn({outpoint: {hash: b64hash, index: index}, script: script, sequence: 4294967295});
@@ -188,7 +190,9 @@ var TX = function () {
 			for (var b in tx.in ) {
 				if (!tx.in.hasOwnProperty(b))
 					continue;
+
 				var input = tx.in[b];
+                //console.log(input);
 				var p = input.prev_out;
 				var lilendHash = Utils.endian(p.hash)
 				// if this came from a transaction to our address...
@@ -196,12 +200,20 @@ var TX = function () {
 					unspenttx = unspenttxs[lilendHash];
 					
 					// remove from unspent transactions, and deduce the amount from the balance
-					balance = balance.subtract(unspenttx[p.n].amount);
-					delete unspenttx[p.n]
+                    if(unspenttx[lilendHash] == null)
+                        unspenttx[lilendHash] = unspenttx[0];
+                    else
+                        unspenttx[lilendHash] = unspenttx[p.n];
+
+                    if(unspenttx[lilendHash] == null)
+                        continue;
+					balance = balance.subtract(unspenttx[lilendHash].amount);
+					delete unspenttx[lilendHash]
 					if (Utils.isEmpty(unspenttx)) {
 						delete unspenttxs[lilendHash]
 					}
 				}
+
 			}
 			
 			// Enumerate outputs

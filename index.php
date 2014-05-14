@@ -187,7 +187,7 @@ $(document).ready(function(){
 			<a href="javascript:void(0)" data-bind="visible:(!mining.running())">Start Mining</a>
 			<a href="javascript:void(0)" data-bind="visible:mining.running">
 				<img src="images/gif-load.gif" class="left"/>
-				Stop Mining. At Nonce: <span id="mining_nonce"></span>
+				Mining in Process... Click to Stop Mining.
 			</a>
 		</button>
 		<ul>

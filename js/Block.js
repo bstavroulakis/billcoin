@@ -138,7 +138,7 @@ var Block = function(){
 					}
 				});
 			}else{
-				$("#mining_nonce").html(event.nonce);
+				$("#mining_nonce").html(e.data.nonce);
 			}
 		}, false);
 	}

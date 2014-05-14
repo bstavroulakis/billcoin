@@ -12,7 +12,7 @@ self.addEventListener('message', function(e) {
     	while(true){
     		var hash2 = sha256.generate(data.hash + nonce);
     		
-    		if(hash2[0] == "0"){
+    		if(hash2[0] == "0" && hash2[1] == "0" && hash2[2] == "0" && hash2[3] == "0" && hash2[4] == "0"){
     			self.postMessage({success:true, nonce:nonce});
     			self.close(); // Terminates the worker.
       			break;
