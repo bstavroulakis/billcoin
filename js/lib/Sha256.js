@@ -31,62 +31,18 @@ var Sha256 = function(){
         self.n++;
     };
 	
-	self.bytesToHex = function(bytes) {
-		for (var hex = [], i = 0; i < bytes.length; i++) {
-			hex.push((bytes[i] >>> 4).toString(16));
-			hex.push((bytes[i] & 0xF).toString(16));
-		}
-		return hex.join("");
-	};
-
-	self.binaryBytesToString = function (bytes) {
-		return bytes.map(function(x){ return String.fromCharCode(x) }).join('');
-	};
-
-	self.wordsToBytes = function (words) {
-	    var bytes = [];
-	    for (var b = 0; b < words.length * 32; b += 8) {
-	        bytes.push((words[b >>> 5] >>> (24 - b % 32)) & 0xFF);
-	    }
-	    return bytes;
-	};
-
-	self.bytesToWords = function (bytes) {
-	  var words = []
-	  for (var i = 0, b = 0; i < bytes.length; i++, b += 8) {
-	    words[b >>> 5] |= bytes[i] << (24 - b % 32)
-	  }
-	  return words
-	}
-
-	self.stringToBytes = function (str) {
-		return self.binaryStringToBytes(unescape(encodeURIComponent(str)));
-	};
-
-	self.binaryStringToBytes = function (str) {
-		for (var bytes = [], i = 0; i < str.length; i++)
-			bytes.push(str.charCodeAt(i));
-		return bytes;
-	};
-
-	self.bytesToString = function (bytes) {
-	    for (var str = [], i = 0; i < bytes.length; i++)
-	      str.push(String.fromCharCode(bytes[i]));
-	    return str.join("");
-	  }
-
 	self.generate = function(message, options) {
 
 		self.W = [];
 
 	    if (message.constructor === String) {
-		    message = self.stringToBytes(message);
+		    message = Utils.stringToBytes(message);
 		  }
 
 		  var H =[ 0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A,
 		           0x510E527F, 0x9B05688C, 0x1F83D9AB, 0x5BE0CD19 ];
 
-		  var m = self.bytesToWords(message);
+		  var m = Utils.bytesToWords(message);
 		  var l = message.length * 8;
 
 		  m[l >> 5] |= 0x80 << (24 - l % 32);
@@ -96,10 +52,10 @@ var Sha256 = function(){
 		    self.processBlock(H, m, i);
 		  }
 
-		  var digestbytes = self.wordsToBytes(H);
+		  var digestbytes = Utils.wordsToBytes(H);
 		  return options && options.asBytes ? digestbytes :
-		         options && options.asString ? self.bytesToString(digestbytes) :
-		         self.bytesToHex(digestbytes)
+		         options && options.asString ? Utils.bytesToString(digestbytes) :
+		         Utils.bytesToHex(digestbytes)
 
 	};
 

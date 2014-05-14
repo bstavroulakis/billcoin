@@ -38,8 +38,6 @@
 	$(document).ready(function(){
 
 		for(i=0; i<=2; i++){
-			//var wallet = new Wallet();
-			//wallet.generate();
 			model.wallets.push({
 				address:ko.observable("18YiM48jTQA36XJbgEJQqpGHRqgdpGidfJ"),
 				wifCompressed:ko.observable("5J8ko4S53Xnxa2b8txXp7caMxmQSCniNPQSdiqoUdnb2Ngk7ZP7")

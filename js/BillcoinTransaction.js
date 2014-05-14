@@ -1,6 +1,3 @@
-//var key = "";
-//var hash = "";
-
 var BillcoinTransaction = function(){
 	var self = this;
 	self.mainDomain = "api/";

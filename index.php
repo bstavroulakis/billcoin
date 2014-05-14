@@ -45,11 +45,18 @@ $(document).ready(function(){
 
 <body>
 
+	<div class="stoppage">
+		<div class="message">
+			<span class="inner">Loading...</span>
+		</div>
+	</div>
+
 	<header class="top_header">
 		<img src="http://bstavroulakis.com/blog/wp-content/uploads/2014/04/billcoin.png" class="billcoin_logo left"/>
 		<h1 class="padding left">Billcoin - Learn Bitcoin in 4 easy steps</h1>
 		<div class="right green_button">
-			Total Billcoins: <span data-bind="text:totalBalance"></span>
+			Total Billcoins: <span data-bind="text:totalBalance"></span><br/>
+			Time to update: <span data-bind="text:balanceUpdateTime"></span>
 		</div>
 		<div class="clearfix"></div>
 	</header>
@@ -173,7 +180,7 @@ $(document).ready(function(){
 		<select id="miner_wallet" data-bind="foreach:wallets">
 			<option data-bind="text:address,value:address,attr:{'data-private':wifCompressed,'data-publickey':publicKey}"></option>
 		</select>
-		<button class="gray_button right full block start_mining">
+		<button class="gray_button right full block start_mining miner_btn">
 			<a href="javascript:void(0)" data-bind="visible:(!mining.running())">Start Mining</a>
 			<a href="javascript:void(0)" data-bind="visible:mining.running">
 				<img src="images/gif-load.gif" class="left"/>

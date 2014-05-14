@@ -9,7 +9,8 @@ var Billcoin = function(){
 		mining:{
 			running:false
 		},
-		totalBalance:0
+		totalBalance:0,
+		balanceUpdateTime:10
 	};
 
 	self.block = new Block();
@@ -55,8 +56,11 @@ var Billcoin = function(){
 					}
 				};
 				billcoinTx.generate( selectedWallet, $("#newTxToAddress").val(),$("#newTxAmount").val() );
+				billcoin.showStoppage("Sending transaction to network. Please wait...");
 				$("#newTxBalance").html(billcoinTx.balance);
-				$.post("api/sendNewTx.php",{transaction : billcoinTx.txJson, raw : billcoinTx.txRaw}, function(){});
+				$.post("api/sendNewTx.php",{transaction : billcoinTx.txJson, raw : billcoinTx.txRaw}, function(){
+					billcoin.hideStoppage();
+				});
 				$( "#dialog-form" ).dialog( "close" );
 	        }
 	      }
@@ -91,16 +95,12 @@ var Billcoin = function(){
 			e.stopImmediatePropagation();
 		})
 
-		$("section").on("click", ".start_mining", function(){
-			$(this).removeClass("start_mining");
-			$(this).addClass("stop_mining");
-			self.startMining();
-		});
-
-		$("section").on("click", ".stop_mining", function(){
-			$(this).removeClass("stop_mining");
-			$(this).addClass("start_mining");
-			self.stopMining();
+		$("section").on("click", ".miner_btn", function(){
+			if($(this).hasClass("start_mining")){				
+				self.startMining();
+			}else{
+				self.stopMining();
+			}
 		});
 
 		$("#blockchain").on("click",".block_element",function(){
@@ -109,6 +109,17 @@ var Billcoin = function(){
 		});
 
 		self.importWalletSetup();
+	};
+
+	self.showStoppage = function(msg){
+		$(".stoppage .inner").html("");
+		$(".stoppage").css("display","block");
+		$(".stoppage .inner").html(msg);
+	};
+
+	self.hideStoppage = function(){
+		$(".stoppage").css("display","none");
+		$(".stoppage .inner").html("");
 	};
 
 	self.setupModel = function(){
@@ -288,12 +299,17 @@ var Billcoin = function(){
 		self.model.totalBalance(total);
 		setTimeout(function(){
     		self.updateBalance();
-    	},5000);
+    		self.model.balanceUpdateTime(10);
+    	},10000);
 	};	
 
 	self.setupWallets();
 	self.updateTransactionData();
 	self.updateBlockchainData();
 	self.updateBalance();
+
+	setInterval(function(){
+		self.model.balanceUpdateTime(self.model.balanceUpdateTime() - 1);
+	},1000);
 
 };

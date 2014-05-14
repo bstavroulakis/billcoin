@@ -1,9 +1,10 @@
 <html>
 <head>
 
-<script src="js/jquery.js"></script>
-<script src="js/BigInteger.js"></script>
-<script src="js/Sha256.js"></script>
+<script src="js/jquery/jquery.js"></script>
+<script src="js/lib/BigInteger.js"></script>
+<script src="js/lib/Sha256.js"></script>
+<script src="js/lib/Utils.js"></script>
 
 <link rel="stylesheet" href="css/main.css">
 <link rel="stylesheet" href="css/spacing.css">
@@ -13,12 +14,10 @@
 		var sha256generator = new Sha256();
 		$("#sha_key_submit").click(function(){
 			var shaStringVal = $("#shaString").val();
-			var bytes = sha256generator.stringToBytes(shaStringVal);
+			var bytes = Utils.stringToBytes(shaStringVal);
 			$("#shaResult").html(sha256generator.generate(bytes));
 		});
-
 	});
-
 </script>
 
 </head>

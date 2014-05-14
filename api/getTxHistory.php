@@ -9,8 +9,6 @@
 	$blockchainTxt = "[" . $blockchainTxt . "]";
 	$blockchain = json_decode($blockchainTxt);
 
-//var_dump($blockchainTxt);
-
 	foreach($blockchain as $block){
 		$trans = $block->transactions;
 		foreach($trans as $t){

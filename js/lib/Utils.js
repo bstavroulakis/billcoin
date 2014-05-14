@@ -75,5 +75,30 @@ var Utils = {
 	isEmpty : function (ob) {
     	for(var i in ob){ if(ob.hasOwnProperty(i)){return false;}}
     	return true;
+	},
+	bytesToWords : function (bytes) {
+	  var words = []
+	  for (var i = 0, b = 0; i < bytes.length; i++, b += 8) {
+	    words[b >>> 5] |= bytes[i] << (24 - b % 32)
+	  }
+	  return words;
+	},
+	wordsToBytes : function (words) {
+	    var bytes = [];
+	    for (var b = 0; b < words.length * 32; b += 8) {
+	        bytes.push((words[b >>> 5] >>> (24 - b % 32)) & 0xFF);
+	    }
+	    return bytes;
+	},
+	binaryStringToBytes : function (str) {
+		for (var bytes = [], i = 0; i < str.length; i++)
+			bytes.push(str.charCodeAt(i));
+		return bytes;
+	},
+	binaryBytesToString : function (bytes) {
+		return bytes.map(function(x){ return String.fromCharCode(x) }).join('');
+	},
+	stringToBytes : function (str) {
+		return Utils.binaryStringToBytes(unescape(encodeURIComponent(str)));
 	}
 }

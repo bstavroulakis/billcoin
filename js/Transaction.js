@@ -35,16 +35,16 @@
   Transaction.prototype.serialize = function ()
   {
     var buffer = [];
-    buffer = buffer.concat(wordsToBytes([parseInt(this.version)]).reverse());
+    buffer = buffer.concat(Utils.wordsToBytes([parseInt(this.version)]).reverse());
     buffer = buffer.concat(Utils.numToVarInt(this.ins.length));
     for (var i = 0; i < this.ins.length; i++) {
       var txin = this.ins[i];
       buffer = buffer.concat(base64ToBytes(txin.outpoint.hash));
-      buffer = buffer.concat(wordsToBytes([parseInt(txin.outpoint.index)]).reverse());
+      buffer = buffer.concat(Utils.wordsToBytes([parseInt(txin.outpoint.index)]).reverse());
       var scriptBytes = txin.script.buffer;
       buffer = buffer.concat(Utils.numToVarInt(scriptBytes.length));
       buffer = buffer.concat(scriptBytes);
-      buffer = buffer.concat(wordsToBytes([parseInt(txin.sequence)]).reverse());
+      buffer = buffer.concat(Utils.wordsToBytes([parseInt(txin.sequence)]).reverse());
     }
     buffer = buffer.concat(Utils.numToVarInt(this.outs.length));
     for (var i = 0; i < this.outs.length; i++) {
@@ -54,16 +54,10 @@
       buffer = buffer.concat(Utils.numToVarInt(scriptBytes.length));
       buffer = buffer.concat(scriptBytes);
     }
-    buffer = buffer.concat(wordsToBytes([parseInt(this.lock_time)]).reverse());
+    buffer = buffer.concat(Utils.wordsToBytes([parseInt(this.lock_time)]).reverse());
 
     return buffer;
   };
-
-var wordsToBytes = function (words) {
-  for (var bytes = [], b = 0; b < words.length * 32; b += 8)
-    bytes.push((words[b >>> 5] >>> (24 - b % 32)) & 0xFF);
-  return bytes;
-};
 
 Transaction.prototype.clone = function ()
 {
@@ -113,7 +107,7 @@ Transaction.prototype.hashTransactionForSignature =
 
     var buffer = txTmp.serialize();
 
-    buffer = buffer.concat(wordsToBytes([parseInt(hashType)]).reverse());
+    buffer = buffer.concat(Utils.wordsToBytes([parseInt(hashType)]).reverse());
 
     var sha256 = new Sha256();
     var hash1 = sha256.generate(buffer, {asBytes: true});

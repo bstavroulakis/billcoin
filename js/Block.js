@@ -94,15 +94,30 @@ var Block = function(){
 	}
 
 	self.startMining = function(transactions, selectedWallet, previousBlock){
+		$(".miner_btn").removeClass("start_mining");
+		$(".miner_btn").addClass("stop_mining");
+		billcoin.model.mining.running(true);
+		self.init(transactions, selectedWallet, previousBlock);
+		self.hashCore = self.previousBlock + self.merkleRoot + self.timestamp;
+		self.miningWorker.postMessage({ 'cmd': 'start', 'hash': self.hashCore });
+	};
 
-		var sha256 = new Sha256();
+	self.stopMining = function(){
+		$(".miner_btn").removeClass("stop_mining");
+		$(".miner_btn").addClass("start_mining");
+		billcoin.model.mining.running(false);
+		self.setupMiner();
+	};
+
+	self.setupMiner = function(){
 		self.miningWorker = new Worker("js/MinerWorker.js");
-		self.miningWorker.addEventListener('message', function(e) {
 
-			self.stopMining();
+		self.miningWorker.addEventListener('message', function(e) {
 			if(e.data.success){
+				billcoin.showStoppage("Sending successful block to network. Please wait...");
+				self.stopMining();
 				self.nonce = e.data.nonce;
-				self.hash = sha256.generate(self.hashCore + self.nonce);				
+				self.hash = self.sha256.generate(self.hashCore + self.nonce);				
 				$("#mining_nonce").html("Found nonce! Sending request");
 				var postObj = {
 					hash : self.hash,
@@ -116,6 +131,7 @@ var Block = function(){
 					block:postObj,
 					blockStr:JSON.stringify(postObj)
 				},function(response){
+					billcoin.hideStoppage();
 					response = JSON.parse(response);
 					if(!response.success){
 						alert("Error while sending block");
@@ -125,18 +141,8 @@ var Block = function(){
 				$("#mining_nonce").html(event.nonce);
 			}
 		}, false);
+	}
 
-		billcoin.model.mining.running(true);
-		self.init(transactions, selectedWallet, previousBlock);
-		self.hashCore = self.previousBlock + self.merkleRoot + self.timestamp;
-		self.miningWorker.postMessage({
-			'cmd': 'start', 
-			'hash': self.hashCore
-		});
-	};
-
-	self.stopMining = function(){
-		billcoin.model.mining.running(false);
-	};
+	self.setupMiner();
 
 };

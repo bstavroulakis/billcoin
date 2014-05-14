@@ -125,3 +125,26 @@ button a{
 .step_link a{
 	font-size:20px;
 }
+
+.stoppage{
+	z-index:100;
+	background-color:rgba(0,0,0,0.8);
+	width:100%;
+	height:100%;
+	position: fixed;
+	top:0px;
+	left:0px;
+	display: none;
+}
+
+.stoppage .message{
+	width:300px;
+	padding:15px;
+	border:2px solid #ffffff;
+	background-color:#efefef;
+	display: block;
+	margin: -150px 0 0 -150px;
+	  left: 50%;
+	  top: 50%;
+	  position: absolute;
+}
