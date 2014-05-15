@@ -19,7 +19,7 @@ var TourGuide = function (TourSteps) {
             funnelID: "tourV1", // we'll pass this to Mixpanel to segement on and guage future funnel improvment
 
             init: function () {
-                $('body').prepend('<div id="tour_mask"></div><div id="tour_dialog"><div class="arrow top"></div><div class="msg"></div></div>');
+                $('body').prepend('<div id="tour_mask"></div><div id="tour_dialog"><div class="arrow top"></div><div class="msg"></div><div id="tour_stop"><div id="tour_stop_btn" class="button">Stop Tour</div></div></div>');
                 this.showStep();
                 self.running = true;
             },
@@ -74,6 +74,14 @@ var TourGuide = function (TourSteps) {
                         self.running = false;
                     });
                 }
+            },
+
+            stopTour:function(){
+                $('#tour_dialog').fadeOut();
+                $('#tour_mask').fadeOut(function () {
+                    $('.tour_item').removeClass('active');
+                    self.running = false;
+                });
             },
 
             // To use: include MixPanel js (see mixpanel.com). Set identity or person info *before* the tour starts.
@@ -177,6 +185,8 @@ var TourGuide = function (TourSteps) {
             // custom click handler when tour is active.
             // Check to see if the next action was clicked to advance the tour (nextSelector)
             tourClickHandler: function (e) {
+                if(e.target.id == "tour_stop_btn")
+                    return;
                 var nextSel = TourSteps[e.data.stop].nextSelector;
                 if (nextSel) { // we only proceed when THIS selector is clicked i.e. #ok_button
                     if ($(e.currentTarget).is(nextSel) || $(nextSel).find(e.currentTarget).length > 0) {

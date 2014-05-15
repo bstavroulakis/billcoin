@@ -122,6 +122,15 @@ var Billcoin = function(){
 			$( "#dialog-block" ).dialog( "open" );
 		});
 
+		$("#tour_stop").on("click",".button",function(){
+			tour.Tour.stopTour();
+		});
+
+		$("div").on("click","#start_tour",function(){
+			tour.Tour.startFrom = 0;
+			tour.Tour.showStep();
+		});
+
 		self.importWalletSetup();
 	};
 

@@ -46,7 +46,7 @@
                 height: 2px;
                 margin: 15px 0;
             }
-            #tour_dialog .button {
+            .tour_dialog_button, #tour_dialog .button {
                 border-radius: 4px;
                 -webkit-border-radius: 4px;
                 -moz-border-radius: 4px;
@@ -73,7 +73,7 @@
                 cursor: pointer;
                 float: right;
             }
-            #tour_dialog .button:hover {
+            .tour_dialog_button:hover, #tour_dialog .button:hover {
                 background: -moz-linear-gradient(top, #44a4c7 0%, #2136bf 100%);
                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #44a4c7), color-stop(100%, #2136bf));
                 background: -webkit-linear-gradient(top, #44a4c7 0%, #2136bf 100%);
