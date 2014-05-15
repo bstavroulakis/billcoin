@@ -136,7 +136,6 @@
 				   isArray(this.chunks[1])) {
 			return 'Address';
 		} else {
-			console.log(this.chunks);
 			throw new Error("Encountered non-standard scriptSig");
 		}
 	};

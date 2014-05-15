@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -78,7 +79,7 @@ $(document).ready(function(){
 			</a>
 		</div>		
 		<div class="right">
-			<div id="start_tour" class="tour_dialog_button margin_tr">Start Tour »</div>
+			<div id="start_tour" class="tour_dialog_button margin_tr">Start Tour</div>
 		</div>
 		<div class="clearfix"></div>
 	</header>

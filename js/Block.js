@@ -24,8 +24,10 @@ var Block = function(){
 		var bitAddress = new BitcoinAddress(selectedWallet.address());
       	var addressHash160 = Utils.bytesToHex(bitAddress.hash);
 
-      	var coinbaseRandArr = new Uint8Array(32);
-		window.crypto.getRandomValues(coinbaseRandArr);
+      	var rand = Math.random();
+		var coinbaseRandArr = Utils.stringToBytes(rand);
+      	//var coinbaseRandArr = new Uint8Array(32);
+		//window.crypto.getRandomValues(coinbaseRandArr);
 		var coinbaseKeyBytes = [];
 		for (var i = 0; i < coinbaseRandArr.length; ++i)
 		  coinbaseKeyBytes[i] = coinbaseRandArr[i];

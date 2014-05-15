@@ -48,9 +48,7 @@ function hashAb(hashA, hashB){
 	var b = decodeHash(hashB);
 	var c = a + " " + b;
 	var hash1 = sha256.generate(c, {asBytes:false});
-	console.log("hash1:", (hash1));
 	var hashed = sha256.generate(hash1, {asBytes:false});
-	console.log("hash2:", (hashed));
 	var ret = decodeHash(hashed);
 	return ret;
 }
@@ -75,7 +73,6 @@ function decodeHash(str){
 	return decoded;
 }
 
-console.log(merkleHash(txHashes));
 </script>
 </head>
 </html>
