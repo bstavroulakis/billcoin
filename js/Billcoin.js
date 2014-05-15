@@ -84,6 +84,11 @@ var Billcoin = function(){
 
 		$(".new_transaction_btn").button().click(function() {
 			$( "#dialog-form" ).dialog( "open" );
+			if(tour.running){
+				var tourWallet = $("#newTx .wallets").find(":selected").val();
+				$( "#dialog-form #newTxToAddress" ).val(tourWallet);
+				$( "#dialog-form #newTxAmount" ).val(0);
+			}
 		});
 
 		$("#generate_btn").click(function(){
@@ -249,14 +254,8 @@ var Billcoin = function(){
 					self.model.transactionsPending.push(transactions[key]);
 				};
 				$("#pendingTransactions").html(liTrans);
-				/*setTimeout(function(){
-            		self.updateTransactionData();
-            	},10000);*/
             },
             complete:function(){
-                /*setTimeout(function(){
-            		self.updateTransactionData();
-            	},10000);*/
             }
         });
 	};
@@ -288,14 +287,8 @@ var Billcoin = function(){
 				};
 				self.blockchain = jQueryData;
 				$("#blockchain").html(liTrans);
-				/*setTimeout(function(){
-            		self.updateBlockchainData();
-            	},10000);*/
             },
             complete:function(){
-            	/*setTimeout(function(){
-            		self.updateBlockchainData();
-            	},10000);*/
             }
         });
 	};
